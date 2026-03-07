@@ -1,0 +1,13 @@
+{
+    "className": "Folder",
+    "children": [
+        {
+            "className": "RemoteEvent",
+            "name": "DialogRemoteEvent"
+        },
+        {
+            "className": "BindableEvent",
+            "name": "DialogBindableEvent"
+        }
+    ]
+}
