@@ -54,8 +54,8 @@ Module.default2 = {
             {
                 id = "i_got_it",
                 text = "I got it!",
-            }
-        }
+            },
+        },
     },
 } :: DialogTypes.DialogSequence
 
@@ -67,8 +67,8 @@ Module.option1 = {
             dialogText = (
                 "In a new server, each game will start at the easiest difficulty.\n" ..
                 "You can learn more about the games by for searching the name of the games online!"
-            )
-        }
+            ),
+        },
     },
 } :: DialogTypes.DialogSequence
 
@@ -88,7 +88,7 @@ Module.have_fun = {
     entry = {
         imageData = Module.default.entry.imageData,
         textData = {
-            dialogText = "Have fun!"
+            dialogText = "Have fun!",
         },
     },
 } :: DialogTypes.DialogSequence
@@ -96,12 +96,12 @@ Module.have_fun = {
 Module.default.nextSequence = Module.default2
 Module.default2.optionId_sequence = {
     how_to_play = Module.option1,
-    i_got_it = Module.have_fun
+    i_got_it = Module.have_fun,
 }
 Module.option1.nextSequence = Module.repeated
 Module.repeated.optionId_sequence = {
     how_to_play = Module.option1.sequenceId,
-    i_got_it = Module.have_fun
+    i_got_it = Module.have_fun,
 }
 
 
