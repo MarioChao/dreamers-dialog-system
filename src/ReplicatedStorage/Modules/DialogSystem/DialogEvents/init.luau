@@ -25,7 +25,8 @@ Constants.eventStrings = {
         },
     },
     dialogBindable = {
-        setDialogSequenceForPlayer = "Bindable Set Dialog Sequence For Player",
+        storeDialogSequencesForPlayer = "Bindable Store Dialog Sequences For Player",
+        setDialogSequenceIdForPlayer = "Bindable Set Dialog Sequence Id For Player",
     }
 }
 

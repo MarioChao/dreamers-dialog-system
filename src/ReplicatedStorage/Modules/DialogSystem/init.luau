@@ -7,7 +7,7 @@
 
 local RunService = game:GetService("RunService")
 local DialogEvents = require(script:WaitForChild("DialogEvents"))
-local Types = require(script:WaitForChild("Types"))
+local DialogTypes = require(script:WaitForChild("DialogTypes"))
 
 
 ----- Check environment -----
@@ -19,9 +19,9 @@ end
 
 ---------- Types ----------
 
-export type DialogGuiStyle = Types.DialogGuiStyle
-export type DialogEntry = Types.DialogEntry
-export type DialogSequence = Types.DialogSequence
+export type DialogGuiStyle = DialogTypes.DialogGuiStyle
+export type DialogEntry = DialogTypes.DialogEntry
+export type DialogSequence = DialogTypes.DialogSequence
 
 
 ---------- Module ----------
@@ -31,10 +31,17 @@ local Module = {}
 
 ----- Module functions -----
 
-function Module.setDialogSequenceForPlayer(player: Player, dialogSequence: Types.DialogSequence)
+function Module.storeDialogSequencesForPlayer(player: Player, dialogSequences: {[any]: DialogTypes.DialogSequence})
     DialogEvents.events.dialogBindableEvent:Fire(
-        DialogEvents.eventStrings.dialogBindable.setDialogSequenceForPlayer,
-        player, dialogSequence
+        DialogEvents.eventStrings.dialogBindable.storeDialogSequencesForPlayer,
+        player, dialogSequences
+    )
+end
+
+function Module.setDialogSequenceIdForPlayer(player: Player, dialogSequenceId: string)
+    DialogEvents.events.dialogBindableEvent:Fire(
+        DialogEvents.eventStrings.dialogBindable.setDialogSequenceIdForPlayer,
+        player, dialogSequenceId
     )
 end
 

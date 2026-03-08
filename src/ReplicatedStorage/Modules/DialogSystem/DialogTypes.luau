@@ -1,6 +1,6 @@
 --!strict
 
--- Types
+-- Dialog Types
 
 
 ---------- Types ----------
@@ -41,14 +41,12 @@ export type DialogEntry = {
     options: {DialogOptionData}?,
 }
 
-export type PreviousDialogSequenceId = string
-
 export type DialogSequence = {
     sequenceId: string,
     entry: DialogEntry,
-    nextSequence: (DialogSequence | PreviousDialogSequenceId)?,
+    nextSequenceId: string,
     nextSequenceCallback: (() -> ())?,
-    optionId_sequence: {[string]: (DialogSequence | PreviousDialogSequenceId)}?,
+    optionId_sequenceId: {[string]: string}?,
     optionId_callback: {[string]: () -> ()}?,
 }
 

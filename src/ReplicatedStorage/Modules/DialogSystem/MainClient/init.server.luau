@@ -10,7 +10,7 @@ local Players = game:GetService("Players")
 
 ---------- Imports ----------
 
-local Types = require(script.Parent:WaitForChild("Types"))
+local DialogTypes = require(script.Parent:WaitForChild("DialogTypes"))
 local DialogEvents = require(script.Parent:WaitForChild("DialogEvents"))
 
 
@@ -156,7 +156,7 @@ onClearDialogEntry = function()
     Constants.dialogUIs.screenGui.Enabled = false
 end
 
-onShowDialogEntry = function(dialogEntry: Types.DialogEntry)
+onShowDialogEntry = function(dialogEntry: DialogTypes.DialogEntry)
     clearPreviousDialog()
     if Constants.dialogUIs.screenGui.Enabled == false then
         Constants.dialogUIs.screenGui.Enabled = true
@@ -198,7 +198,7 @@ waitSkippable = function(waitTime: number)
     end
 end
 
-applyDialogGuiStyle = function(guiStyle: Types.DialogGuiStyle)
+applyDialogGuiStyle = function(guiStyle: DialogTypes.DialogGuiStyle)
     for _, uiGradient in Constants.dialogUIs.backgroundUIGradients do
         uiGradient.Color = guiStyle.backgroundColor or Constants.dialogUIs.defaultGuiStyles.backgroundColor
     end
@@ -217,18 +217,18 @@ applyDialogGuiStyle = function(guiStyle: Types.DialogGuiStyle)
     end
 end
 
-applyDialogImageData = function(imageData: Types.DialogImageData)
+applyDialogImageData = function(imageData: DialogTypes.DialogImageData)
     applyDialogIndividualImageData(Constants.dialogUIs.center_imageLabel, imageData.centerImage or {})
     applyDialogIndividualImageData(Constants.dialogUIs.left_imageLabel, imageData.leftImage or {})
     applyDialogIndividualImageData(Constants.dialogUIs.right_imageLabel, imageData.rightImage or {})
 end
 
-applyDialogIndividualImageData = function(imageLabel: ImageLabel, imageData: Types.DialogIndividualImageData)
+applyDialogIndividualImageData = function(imageLabel: ImageLabel, imageData: DialogTypes.DialogIndividualImageData)
     imageLabel.Image = imageData.imageId or ""
-    imageLabel.Size = imageData.size or UDim2.new(0.3, 0, 1, 0)
+    imageLabel.Size = imageData.size or UDim2.new(1, 0, 1, 0)
 end
 
-applyDialogTextData = function(textData: Types.DialogTextData)
+applyDialogTextData = function(textData: DialogTypes.DialogTextData)
     local lastSpeakerName = Constants.dialogUIs.speaker_textLabel.Text
     local targetSpeakerName = textData.speakerName or lastSpeakerName
     local targetDialogText = textData.dialogText
@@ -245,7 +245,7 @@ applyDialogTextData = function(textData: Types.DialogTextData)
     task.wait(0.5)
 end
 
-applyDialogOptionsData = function(optionsData: {Types.DialogOptionData})
+applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
     local optionCount = 0
     local optionId_info = {} :: {[string]: {
         textLabel: TextLabel,
@@ -285,7 +285,8 @@ end
 
 writeText = function(textInstance: Instance, text: string, charSpeed: number, skippable: boolean)
     if textInstance:IsA("TextBox") or textInstance:IsA("TextButton") or textInstance:IsA("TextLabel") then
-        textInstance.Text = ""
+        local tempInstance = textInstance :: TextLabel
+        tempInstance.Text = ""
 
         local typedMessage = ""
         local typedCharCount = 0
@@ -306,9 +307,9 @@ writeText = function(textInstance: Instance, text: string, charSpeed: number, sk
                 break
             end
             typedMessage ..= string.sub(text, typedCharCount, typedCharCount)
-            textInstance.Text = typedMessage
+            tempInstance.Text = typedMessage
         end
-        textInstance.Text = text
+        tempInstance.Text = text
     end
 end
 

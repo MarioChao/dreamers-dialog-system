@@ -25,7 +25,8 @@ local onPlayerAdded
 ----- Player added -----
 
 onPlayerAdded = function(player: Player)
-    DialogSystem.setDialogSequenceForPlayer(player, TestDialogSequence.default)
+    DialogSystem.storeDialogSequencesForPlayer(player, TestDialogSequence)
+    DialogSystem.setDialogSequenceIdForPlayer(player, TestDialogSequence.default.sequenceId)
 end
 
 

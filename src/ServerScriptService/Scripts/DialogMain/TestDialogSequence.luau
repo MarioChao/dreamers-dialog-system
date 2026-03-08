@@ -8,7 +8,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 ---------- Imports ----------
 
-local DialogTypes = require(ReplicatedStorage.Modules.DialogSystem.Types)
+local DialogConstants = require(ReplicatedStorage.Modules.DialogSystem.DialogConstants)
+local DialogTypes = require(ReplicatedStorage.Modules.DialogSystem.DialogTypes)
 
 
 ---------- Module ----------
@@ -24,7 +25,7 @@ Module.default = {
         imageData = {
             rightImage = {
                 imageId = "rbxthumb://type=Avatar&id=417781436&w=352&h=352",
-                size = UDim2.fromOffset(352, 352),
+                size = UDim2.fromScale(0.3, 1),
             },
         },
         textData = {
@@ -32,6 +33,7 @@ Module.default = {
             dialogText = "Hello.\nWelcome to the game!",
         },
     },
+    nextSequenceId = "default2",
 } :: DialogTypes.DialogSequence
 
 Module.default2 = {
@@ -40,7 +42,7 @@ Module.default2 = {
         imageData = {
             rightImage = {
                 imageId = "rbxthumb://type=AvatarBust&id=417781436&w=352&h=352",
-                size = UDim2.fromOffset(352, 352),
+                size = UDim2.fromOffset(0.3, 1),
             },
         },
         textData = {
@@ -57,6 +59,10 @@ Module.default2 = {
             },
         },
     },
+    optionId_sequenceId = {
+        how_to_play = "option1",
+        i_got_it = "have_fun",
+    },
 } :: DialogTypes.DialogSequence
 
 Module.option1 = {
@@ -70,6 +76,7 @@ Module.option1 = {
             ),
         },
     },
+    nextSequenceId = "repeated",
 } :: DialogTypes.DialogSequence
 
 Module.repeated = {
@@ -81,6 +88,10 @@ Module.repeated = {
         },
         options = Module.default2.entry.options,
     },
+    optionId_sequenceId = {
+        how_to_play = "option1",
+        i_got_it = "have_fun",
+    },
 } :: DialogTypes.DialogSequence
 
 Module.have_fun = {
@@ -91,18 +102,8 @@ Module.have_fun = {
             dialogText = "Have fun!",
         },
     },
+    nextSequenceId = DialogConstants.CLOSE_SEQUENCE_ID,
 } :: DialogTypes.DialogSequence
-
-Module.default.nextSequence = Module.default2
-Module.default2.optionId_sequence = {
-    how_to_play = Module.option1,
-    i_got_it = Module.have_fun,
-}
-Module.option1.nextSequence = Module.repeated
-Module.repeated.optionId_sequence = {
-    how_to_play = Module.option1.sequenceId,
-    i_got_it = Module.have_fun,
-}
 
 
 ---------- Return module ----------
