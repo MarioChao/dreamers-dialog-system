@@ -72,7 +72,7 @@ Module.option1 = {
         textData = {
             dialogText = (
                 "In a new server, each game will start at the easiest difficulty.\n" ..
-                "You can learn more about the games by for searching the name of the games online!"
+                "You can learn more about the games by searching up the name of the games online!"
             ),
         },
     },
