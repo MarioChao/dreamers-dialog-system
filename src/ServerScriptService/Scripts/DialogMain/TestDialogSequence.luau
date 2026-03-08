@@ -42,7 +42,7 @@ Module.default2 = {
         imageData = {
             rightImage = {
                 imageId = "rbxthumb://type=AvatarBust&id=417781436&w=352&h=352",
-                size = UDim2.fromOffset(0.3, 1),
+                size = UDim2.fromScale(0.3, 1),
             },
         },
         textData = {
