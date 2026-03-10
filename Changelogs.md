@@ -1,5 +1,15 @@
 # Changelogs
 
+## [v0.0.3] Next indicator + Sequence warning + CharSpeed parameter | 2026/03/10
+
+Added a visual indicator for proceeding to the next dialog sequence.
+- Appears as `>>` at the bottom-right corner.
+
+Added an output warning when a dialog sequence is missing both `nextSequenceId` and `optionId_sequenceIds`.
+- In such cases, the dialog sequence will act like a closing dialogue.
+
+Added `charSpeed` parameter to `DialogEntry.textData` to control the text writing speed (default 48).
+
 ## [v0.0.2] Format update + Small fixes | 2026/03/07
 
 Updated the dialog GUI:

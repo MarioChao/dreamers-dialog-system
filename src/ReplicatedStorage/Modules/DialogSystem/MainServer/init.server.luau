@@ -68,6 +68,12 @@ onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[an
     assert(player and player:IsA("Player"), "[Dialog System]: invalid player.")
     for _, dialogSequence in dialogSequences do
         assert(dialogSequence.sequenceId, "[Dialog System]: Missing sequenceId.")
+        if not (dialogSequence.nextSequenceId or dialogSequence.optionId_sequenceId) then
+            warn(
+                `[Dialog System]: Missing next sequence id or option sequence ids for ` ..
+                `dialog sequence {dialogSequence.sequenceId}.`
+            )
+        end
         if not Globals.player_sequenceId_sequence[player] then
             Globals.player_sequenceId_sequence[player] = {}
         end
@@ -166,9 +172,8 @@ onPlayerNextDialog = function(player: Player)
         end
     end
 
-    if dialogSequence.nextSequenceId then
-        onSetDialogSequenceIdForPlayer(player, dialogSequence.nextSequenceId)
-    end
+    local nextSequenceId = dialogSequence.nextSequenceId or DialogConstants.CLOSE_SEQUENCE_ID
+    onSetDialogSequenceIdForPlayer(player, nextSequenceId)
 end
 
 

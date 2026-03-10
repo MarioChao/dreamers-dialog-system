@@ -21,7 +21,7 @@ local Constants = {}
 Constants.localPlayer = Players.LocalPlayer or Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
 Constants.playerGui = Constants.localPlayer.PlayerGui
 
-Constants.charSpeed = 32
+Constants.defaultCharSpeed = 48
 
 Constants.defaultDialogScreenGui = script.Parent:WaitForChild("Dialog_ScreenGui")
 
@@ -53,6 +53,7 @@ do
     screenUIs.entryButton = screenUIs.screenGui:WaitForChild("Entry_Button")
     screenUIs.speaker_textLabel = screenUIs.entryButton:WaitForChild("Speaker_TextLabel")
     screenUIs.dialogText_textLabel = screenUIs.entryButton:WaitForChild("Text_TextLabel")
+    screenUIs.nextIndicator_textLabel = screenUIs.entryButton:WaitForChild("NextIndicator_TextLabel")
 
     screenUIs.backgroundUIGradients = {
         screenUIs.defaultOption_textButton:WaitForChild("UIGradient"),
@@ -66,11 +67,13 @@ do
         screenUIs.optionText_textLabel:WaitForChild("UIStroke"),
         screenUIs.speaker_textLabel:WaitForChild("UIStroke"),
         screenUIs.dialogText_textLabel:WaitForChild("UIStroke"),
+        screenUIs.nextIndicator_textLabel:WaitForChild("UIStroke"),
     }
     screenUIs.textLabels = {
         screenUIs.optionText_textLabel,
         screenUIs.speaker_textLabel,
         screenUIs.dialogText_textLabel,
+        screenUIs.nextIndicator_textLabel,
     }
 
     screenUIs.defaultGuiStyles = {
@@ -104,6 +107,7 @@ local Globals = {}
 
 Globals.optionTextButtons = {} :: {typeof(Constants.dialogUIs.defaultOption_textButton)}
 Globals.isEntryButtonClicked = false
+Globals.charSpeed = Constants.defaultCharSpeed
 
 
 ---------- Local functions ----------
@@ -119,6 +123,7 @@ local applyDialogGuiStyle
 local applyDialogImageData
 local applyDialogIndividualImageData
 local applyDialogTextData
+local setNextIndicatorVisible
 local applyDialogOptionsData
 
 local writeText
@@ -163,6 +168,7 @@ onShowDialogEntry = function(dialogEntry: DialogTypes.DialogEntry)
     end
 
     Globals.isEntryButtonClicked = false
+    setNextIndicatorVisible(false)
     applyDialogGuiStyle(dialogEntry.dialogGuiStyle or {})
     applyDialogImageData(dialogEntry.imageData or {})
     applyDialogTextData(dialogEntry.textData)
@@ -170,6 +176,7 @@ onShowDialogEntry = function(dialogEntry: DialogTypes.DialogEntry)
     -- Check options
     if dialogEntry.options == nil or next(dialogEntry.options) == nil then
         -- Proceed to next sequence if no option
+        setNextIndicatorVisible(true)
         Globals.isEntryButtonClicked = false
         while not Globals.isEntryButtonClicked do
             task.wait()
@@ -229,20 +236,26 @@ applyDialogIndividualImageData = function(imageLabel: ImageLabel, imageData: Dia
 end
 
 applyDialogTextData = function(textData: DialogTypes.DialogTextData)
+    -- Get info
     local lastSpeakerName = Constants.dialogUIs.speaker_textLabel.Text
     local targetSpeakerName = textData.speakerName or lastSpeakerName
     local targetDialogText = textData.dialogText
+    Globals.charSpeed = textData.charSpeed or Constants.defaultCharSpeed
 
     -- Write speaker name if needed
     Constants.dialogUIs.dialogText_textLabel.Text = ""
     if lastSpeakerName ~= targetSpeakerName then
-        writeText(Constants.dialogUIs.speaker_textLabel, targetSpeakerName, Constants.charSpeed, true)
+        writeText(Constants.dialogUIs.speaker_textLabel, targetSpeakerName, Globals.charSpeed, true)
         waitSkippable(0.5)
     end
 
     -- Write dialog text
-    writeText(Constants.dialogUIs.dialogText_textLabel, targetDialogText, Constants.charSpeed, true)
+    writeText(Constants.dialogUIs.dialogText_textLabel, targetDialogText, Globals.charSpeed, true)
     task.wait(0.5)
+end
+
+setNextIndicatorVisible = function(isVisible: boolean)
+    Constants.dialogUIs.nextIndicator_textLabel.Visible = isVisible
 end
 
 applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
@@ -275,7 +288,7 @@ applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
 
     for _, optionInfo in optionId_info do
         task.defer(function()
-            writeText(optionInfo.textLabel, optionInfo.text, Constants.charSpeed, false)
+            writeText(optionInfo.textLabel, optionInfo.text, Globals.charSpeed, false)
         end)
     end
 end

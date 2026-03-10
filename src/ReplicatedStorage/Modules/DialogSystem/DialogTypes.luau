@@ -27,6 +27,7 @@ export type DialogImageData = {
 export type DialogTextData = {
     dialogText: string,
     speakerName: string?,
+    charSpeed: number?,
 }
 
 export type DialogOptionData = {
