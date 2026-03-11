@@ -11,6 +11,8 @@ Added UI fading transitions using `UIUtil`:
 
 Added image preloading that occurs as soon as a dialog entry is received.
 
+Fixed instant fading when options are spammed.
+
 ## [v0.0.3] Next indicator + Sequence warning + CharSpeed parameter | 2026/03/10 (1)
 
 Added a visual indicator for proceeding to the next dialog sequence.

@@ -364,6 +364,9 @@ applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
         newOption_textButton.LayoutOrder = optionCount
         newOption_textButton.Visible = true
         newOption_textButton.MouseButton1Click:Connect(function()
+            if Globals.isPreviousFadeInProgress then
+                return
+            end
             onQueryNextSequence()
             DialogEvents.events.dialogRemoteEvent:FireServer(
                 DialogEvents.eventStrings.dialogRemote.toServer.chooseOption, option.id
