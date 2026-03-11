@@ -5,6 +5,7 @@
 
 ---------- Services ----------
 
+local ContentProvider = game:GetService("ContentProvider")
 local Players = game:GetService("Players")
 
 
@@ -12,6 +13,8 @@ local Players = game:GetService("Players")
 
 local DialogTypes = require(script.Parent:WaitForChild("DialogTypes"))
 local DialogEvents = require(script.Parent:WaitForChild("DialogEvents"))
+
+local UIUtil = require(script.Parent.Parent:WaitForChild("UIUtil"))
 
 
 ---------- Constants ----------
@@ -22,6 +25,7 @@ Constants.localPlayer = Players.LocalPlayer or Players:GetPropertyChangedSignal(
 Constants.playerGui = Constants.localPlayer.PlayerGui
 
 Constants.defaultCharSpeed = 48
+Constants.fadeTweenInfo = TweenInfo.new(0.6)
 
 Constants.defaultDialogScreenGui = script.Parent:WaitForChild("Dialog_ScreenGui")
 
@@ -48,6 +52,7 @@ do
     screenUIs.options_frame = screenUIs.screenGui:WaitForChild("Options_Frame")
     screenUIs.defaultOption_textButton = screenUIs.options_frame:WaitForChild("DefaultOption_TextButton")
     screenUIs.defaultOption_textButton.Visible = false
+    screenUIs.defaultOption_textButton.Parent = nil
     screenUIs.optionText_textLabel = screenUIs.defaultOption_textButton:WaitForChild("Text_TextLabel")
 
     screenUIs.entryButton = screenUIs.screenGui:WaitForChild("Entry_Button")
@@ -109,21 +114,26 @@ Globals.optionTextButtons = {} :: {typeof(Constants.dialogUIs.defaultOption_text
 Globals.isEntryButtonClicked = false
 Globals.charSpeed = Constants.defaultCharSpeed
 
+Globals.isPreviousFadeInProgress = false
+
 
 ---------- Local functions ----------
 
 local connectDialogEvents
 local connectButtonEvents
 
+local onQueryNextSequence
 local onClearDialogEntry
 local onShowDialogEntry
+local setEmptyDialog
 local clearPreviousDialog
 local waitSkippable
 local applyDialogGuiStyle
+local preloadDialogImageData
 local applyDialogImageData
 local applyDialogIndividualImageData
 local applyDialogTextData
-local setNextIndicatorVisible
+local applyUIFade
 local applyDialogOptionsData
 
 local writeText
@@ -156,36 +166,73 @@ end
 
 ----- Dialog -----
 
+onQueryNextSequence = function()
+    Globals.isPreviousFadeInProgress = true
+    task.defer(function()
+        applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, false, {useFade = true, willWait = false})
+        applyUIFade(Constants.dialogUIs.options_frame, false, {useFade = true, willWait = false})
+        applyUIFade(Constants.dialogUIs.dialogText_textLabel, false, {useFade = true, willWait = true})
+        Globals.isPreviousFadeInProgress = false
+    end)
+end
+
 onClearDialogEntry = function()
     clearPreviousDialog()
+    applyUIFade(Constants.dialogUIs.screenGui, false, {useFade = true, willWait = true})
     Constants.dialogUIs.screenGui.Enabled = false
 end
 
 onShowDialogEntry = function(dialogEntry: DialogTypes.DialogEntry)
-    clearPreviousDialog()
-    if Constants.dialogUIs.screenGui.Enabled == false then
-        Constants.dialogUIs.screenGui.Enabled = true
+    -- Preload content
+    preloadDialogImageData(dialogEntry.imageData or {})
+
+    -- Wait for previous fade to finish
+    while Globals.isPreviousFadeInProgress do
+        task.wait()
     end
 
+    -- Prepare for dialog entry
+    clearPreviousDialog()
+    if Constants.dialogUIs.screenGui.Enabled == false then
+        applyUIFade(Constants.dialogUIs.screenGui, false, {useFade = false, willWait = false})
+        setEmptyDialog()
+        Constants.dialogUIs.screenGui.Enabled = true
+        applyUIFade(Constants.dialogUIs.screenGui, true, {useFade = true, willWait = false})
+    end
+
+    -- Show dialog entry
     Globals.isEntryButtonClicked = false
-    setNextIndicatorVisible(false)
+    applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, false, {useFade = false, willWait = false})
     applyDialogGuiStyle(dialogEntry.dialogGuiStyle or {})
     applyDialogImageData(dialogEntry.imageData or {})
     applyDialogTextData(dialogEntry.textData)
 
     -- Check options
     if dialogEntry.options == nil or next(dialogEntry.options) == nil then
-        -- Proceed to next sequence if no option
-        setNextIndicatorVisible(true)
+        --[[ Proceed to next sequence if no option ]]
+
+        -- Wait for player click
+        applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, true, {useFade = true, willWait = false})
         Globals.isEntryButtonClicked = false
         while not Globals.isEntryButtonClicked do
             task.wait()
         end
+
+        -- Query next sequence
+        onQueryNextSequence()
         DialogEvents.events.dialogRemoteEvent:FireServer(DialogEvents.eventStrings.dialogRemote.toServer.nextDialog)
     else
         -- Apply options
+        applyUIFade(Constants.dialogUIs.options_frame, true, {useFade = false, willWait = false})
         applyDialogOptionsData(dialogEntry.options)
     end
+end
+
+setEmptyDialog = function()
+    clearPreviousDialog()
+    Constants.dialogUIs.speaker_textLabel.Text = ""
+    Constants.dialogUIs.dialogText_textLabel.Text = ""
+    applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, false, {useFade = false, willWait = false})
 end
 
 clearPreviousDialog = function()
@@ -224,6 +271,28 @@ applyDialogGuiStyle = function(guiStyle: DialogTypes.DialogGuiStyle)
     end
 end
 
+preloadDialogImageData = function(imageData: DialogTypes.DialogImageData)
+    local imageLabels = {}
+
+    -- Get images
+    local function addImage(imageData: DialogTypes.DialogIndividualImageData)
+        if imageData.imageId then
+            local imageId = imageData.imageId
+            local imageLabel = Instance.new("ImageLabel")
+            imageLabel.Image = imageId
+            table.insert(imageLabels, imageLabel)
+        end
+    end
+    addImage(imageData.centerImage or {})
+    addImage(imageData.leftImage or {})
+    addImage(imageData.rightImage or {})
+
+    -- Preload images
+    task.defer(function()
+        ContentProvider:PreloadAsync(imageLabels)
+    end)
+end
+
 applyDialogImageData = function(imageData: DialogTypes.DialogImageData)
     applyDialogIndividualImageData(Constants.dialogUIs.center_imageLabel, imageData.centerImage or {})
     applyDialogIndividualImageData(Constants.dialogUIs.left_imageLabel, imageData.leftImage or {})
@@ -245,17 +314,42 @@ applyDialogTextData = function(textData: DialogTypes.DialogTextData)
     -- Write speaker name if needed
     Constants.dialogUIs.dialogText_textLabel.Text = ""
     if lastSpeakerName ~= targetSpeakerName then
+        if lastSpeakerName ~= "" then
+            applyUIFade(Constants.dialogUIs.speaker_textLabel, false, {useFade = true, willWait = true, skippable = true})
+            Constants.dialogUIs.speaker_textLabel.Text = ""
+            task.wait()
+            applyUIFade(Constants.dialogUIs.speaker_textLabel, true, {useFade = false, willWait = false})
+        end
         writeText(Constants.dialogUIs.speaker_textLabel, targetSpeakerName, Globals.charSpeed, true)
         waitSkippable(0.5)
     end
 
     -- Write dialog text
+    task.wait()
+    applyUIFade(Constants.dialogUIs.dialogText_textLabel, true, {useFade = false, willWait = false})
     writeText(Constants.dialogUIs.dialogText_textLabel, targetDialogText, Globals.charSpeed, true)
     task.wait(0.5)
 end
 
-setNextIndicatorVisible = function(isVisible: boolean)
-    Constants.dialogUIs.nextIndicator_textLabel.Visible = isVisible
+applyUIFade = function(container: Instance, isVisible: boolean, fadeData: {useFade: boolean?, willWait: boolean?, skippable: boolean?})
+    if fadeData.useFade then
+        if fadeData.willWait then
+            if fadeData.skippable then
+                UIUtil.fade(container, Constants.fadeTweenInfo, isVisible, false)
+                waitSkippable(Constants.fadeTweenInfo.Time + Constants.fadeTweenInfo.DelayTime)
+            else
+                UIUtil.fade(container, Constants.fadeTweenInfo, isVisible, true)
+            end
+        else
+            UIUtil.fade(container, Constants.fadeTweenInfo, isVisible, false)
+        end
+    else
+        if isVisible then
+            UIUtil.resetTransparency(container)
+        else
+            UIUtil.setTransparency(container, 1)
+        end
+    end
 end
 
 applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
@@ -270,6 +364,7 @@ applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
         newOption_textButton.LayoutOrder = optionCount
         newOption_textButton.Visible = true
         newOption_textButton.MouseButton1Click:Connect(function()
+            onQueryNextSequence()
             DialogEvents.events.dialogRemoteEvent:FireServer(
                 DialogEvents.eventStrings.dialogRemote.toServer.chooseOption, option.id
             )
@@ -282,6 +377,8 @@ applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
             text = option.text
         }
 
+        applyUIFade(newOption_textButton, false, {useFade = false, willWait = false})
+        applyUIFade(newOption_textButton, true, {useFade = true, willWait = false})
         table.insert(Globals.optionTextButtons, newOption_textButton)
         newOption_textButton.Parent = Constants.dialogUIs.options_frame
     end

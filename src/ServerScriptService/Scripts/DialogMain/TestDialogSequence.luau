@@ -29,7 +29,7 @@ Module.default = {
             },
         },
         textData = {
-            speakerName = "Panicks28 - Game Creator",
+            speakerName = "???",
             dialogText = "Hello.\nWelcome to the game!",
         },
     },
@@ -46,6 +46,7 @@ Module.default2 = {
             },
         },
         textData = {
+            speakerName = "Panicks28 - Game Creator",
             dialogText = "To start, vote for a puzzle by stepping on one of the plates with red outlines!",
         },
         options = {

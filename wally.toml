@@ -1,0 +1,8 @@
+[package]
+name = "mariochao/dreamers-dialog-system"
+version = "0.0.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+UIUtil = "mariochao/ui-util@0.0.1"

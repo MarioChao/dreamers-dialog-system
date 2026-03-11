@@ -7,3 +7,7 @@
 
 .DS_Store
 sourcemap.json
+
+# Wally package files
+Packages
+wally.lock

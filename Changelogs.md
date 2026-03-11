@@ -1,6 +1,17 @@
 # Changelogs
 
-## [v0.0.3] Next indicator + Sequence warning + CharSpeed parameter | 2026/03/10
+## [v0.0.4] UI fading transition + Preload images | 2026/03/10 (2)
+
+Added UI fading transitions using `UIUtil`:
+- Screen UI fades in & out when dialog starts & closes.
+- Next indicator fades in & out.
+- Options fade in when created.
+- Dialog text, next indicator, and options fade out when querying for the next sequence.
+- Speaker name fades out when it changes.
+
+Added image preloading that occurs as soon as a dialog entry is received.
+
+## [v0.0.3] Next indicator + Sequence warning + CharSpeed parameter | 2026/03/10 (1)
 
 Added a visual indicator for proceeding to the next dialog sequence.
 - Appears as `>>` at the bottom-right corner.
