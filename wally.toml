@@ -5,4 +5,5 @@ registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
 [dependencies]
+BelovedRemote = "mariochao/beloved-remote@0.0.2"
 UIUtil = "mariochao/ui-util@0.0.1"

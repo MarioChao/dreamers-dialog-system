@@ -19,8 +19,8 @@ local Module = {}
 
 ----- Module fields -----
 
-Module.default = {
-    sequenceId = "default",
+Module.start = {
+    sequenceId = "start",
     entry = {
         imageData = {
             rightImage = {
@@ -29,16 +29,25 @@ Module.default = {
             },
         },
         textData = {
-            speakerName = "???",
-            dialogText = "Hello.\nWelcome to the game!",
+            speakerName = "Panicks28 - Game Creator",
+            dialogText = (
+                "Hello.\n" ..
+                "Welcome to the game!"
+            ),
         },
     },
-    nextSequenceId = "default2",
+    nextSequenceId = "dreamer_dialog",
 } :: DialogTypes.DialogSequence
 
-Module.default2 = {
-    sequenceId = "default2",
+Module.dreamer_dialog = {
+    sequenceId = "dreamer_dialog",
     entry = {
+        dialogGuiStyle = {
+            backgroundColor = ColorSequence.new(Color3.new(.75, 0, 0)),
+            textColor = Color3.new(0, .75, 0),
+            textStrokeColor = Color3.new(0, .25, 0),
+            textFont = Font.fromEnum(Enum.Font.Merriweather),
+        },
         imageData = {
             rightImage = {
                 imageId = "rbxthumb://type=AvatarBust&id=417781436&w=352&h=352",
@@ -46,13 +55,12 @@ Module.default2 = {
             },
         },
         textData = {
-            speakerName = "Panicks28 - Game Creator",
-            dialogText = "To start, vote for a puzzle by stepping on one of the plates with red outlines!",
+            dialogText = "This is dreamer's dialog system!",
         },
         options = {
             {
-                id = "how_to_play",
-                text = "How to play the game?",
+                id = "rewind",
+                text = "Can you go back to the previous prompt?",
             },
             {
                 id = "i_got_it",
@@ -61,36 +69,7 @@ Module.default2 = {
         },
     },
     optionId_sequenceId = {
-        how_to_play = "option1",
-        i_got_it = "have_fun",
-    },
-} :: DialogTypes.DialogSequence
-
-Module.option1 = {
-    sequenceId = "option1",
-    entry = {
-        imageData = Module.default2.entry.imageData,
-        textData = {
-            dialogText = (
-                "In a new server, each game will start at the easiest difficulty.\n" ..
-                "You can learn more about the games by searching up the name of the games online!"
-            ),
-        },
-    },
-    nextSequenceId = "repeated",
-} :: DialogTypes.DialogSequence
-
-Module.repeated = {
-    sequenceId = "repeated",
-    entry = {
-        imageData = Module.default2.entry.imageData,
-        textData = {
-            dialogText = "Any more questions?",
-        },
-        options = Module.default2.entry.options,
-    },
-    optionId_sequenceId = {
-        how_to_play = "option1",
+        rewind = "start",
         i_got_it = "have_fun",
     },
 } :: DialogTypes.DialogSequence
@@ -98,7 +77,7 @@ Module.repeated = {
 Module.have_fun = {
     sequenceId = "have_fun",
     entry = {
-        imageData = Module.default.entry.imageData,
+        imageData = Module.start.entry.imageData,
         textData = {
             dialogText = "Have fun!",
         },

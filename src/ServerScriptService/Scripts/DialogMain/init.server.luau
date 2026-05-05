@@ -14,19 +14,41 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local _Modules = ReplicatedStorage:WaitForChild("Modules")
 local DialogSystem = require(_Modules:WaitForChild("DialogSystem"))
 
-local TestDialogSequence = require(script:WaitForChild("TestDialogSequence"))
+local _DialogStorage = script.Parent.Parent:WaitForChild("DialogStorage")
+
+
+---------- Constants ----------
+
+local Constants = {}
+
+Constants.initialSequencesModule = script:GetAttribute("InitSequencesModule")
+Constants.initialSequenceId = script:GetAttribute("InitSequenceId") or "start"
+
+table.freeze(Constants)
 
 
 ---------- Local functions ----------
 
+local setPlayerDialog
 local onPlayerAdded
+
+
+----- Set dialog -----
+
+setPlayerDialog = function(player: Player, dialogSequences: {DialogSystem.DialogSequence}, startId: string)
+    DialogSystem.storeDialogSequencesForPlayer(player, dialogSequences)
+    DialogSystem.setDialogSequenceIdForPlayer(player, startId)
+end
 
 
 ----- Player added -----
 
 onPlayerAdded = function(player: Player)
-    DialogSystem.storeDialogSequencesForPlayer(player, TestDialogSequence)
-    DialogSystem.setDialogSequenceIdForPlayer(player, TestDialogSequence.default.sequenceId)
+    local _InitialSequences = _DialogStorage:FindFirstChild(Constants.initialSequencesModule)
+    if _InitialSequences then
+        local InitialSequences = require(_InitialSequences) :: {DialogSystem.DialogSequence}
+        setPlayerDialog(player, InitialSequences, Constants.initialSequenceId)
+    end
 end
 
 

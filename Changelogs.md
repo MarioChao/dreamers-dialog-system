@@ -1,5 +1,14 @@
 # Changelogs
 
+## [v0.0.5] Beloved remote migration + Dialog storage | 2026/05/04
+
+Migrated remote event usages to [BelovedRemote](https://github.com/MarioChao/beloved-remote).
+
+Created a storage folder `DialogStorage` under `ServerScriptService`.
+- Stores dialog sequences modules for organization.
+
+Added a template dialog sequences module.
+
 ## [v0.0.4] UI fading transition + Preload images | 2026/03/10 (2)
 
 Added UI fading transitions using `UIUtil`:

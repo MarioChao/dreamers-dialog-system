@@ -1,5 +1,9 @@
 {
     "properties": {
         "RunContext": "Server"
+    },
+    "attributes": {
+        "InitSequencesModule": "Template",
+        "InitSequenceId": "start"
     }
 }

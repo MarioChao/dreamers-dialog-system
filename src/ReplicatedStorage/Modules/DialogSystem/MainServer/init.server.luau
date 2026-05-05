@@ -6,6 +6,7 @@
 ---------- Services ----------
 
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 ---------- Imports ----------
@@ -13,6 +14,9 @@ local Players = game:GetService("Players")
 local DialogConstants = require(script.Parent.DialogConstants)
 local DialogTypes = require(script.Parent.DialogTypes)
 local DialogEvents = require(script.Parent:WaitForChild("DialogEvents"))
+
+local _Modules = ReplicatedStorage:WaitForChild("Modules")
+local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
 
 
 ---------- Globals ----------
@@ -30,7 +34,6 @@ local connectDialogEvents
 local onStoreDialogSequencesForPlayer
 local onSetDialogSequenceIdForPlayer
 local getPlayerDialogSequence
-local waitForPlayerConnected
 local showDialogEntryForPlayer
 local clearDialogForPlayer
 local onPlayerChooseOption
@@ -41,15 +44,8 @@ local onPlayerNextDialog
 
 connectDialogEvents = function()
     -- Listen for client dialog events
-    DialogEvents.events.dialogRemoteEvent.OnServerEvent:Connect(function(player: Player, mode: string, ...)
-        if mode == DialogEvents.eventStrings.dialogRemote.toServer.connectPlayer then
-            Globals.player_connected[player] = true
-        elseif mode == DialogEvents.eventStrings.dialogRemote.toServer.chooseOption then
-            onPlayerChooseOption(player, ...)
-        elseif mode == DialogEvents.eventStrings.dialogRemote.toServer.nextDialog then
-            onPlayerNextDialog(player, ...)
-        end
-    end)
+    BelovedRemote.connect_toServer(DialogEvents.remoteActions.toServer.chooseOption, onPlayerChooseOption)
+    BelovedRemote.connect_toServer(DialogEvents.remoteActions.toServer.nextDialog, onPlayerNextDialog)
 
     -- Listen for server dialog events
     DialogEvents.events.dialogBindableEvent.Event:Connect(function(mode: string, ...)
@@ -108,32 +104,12 @@ onSetDialogSequenceIdForPlayer = function(player: Player, dialogSequenceId: stri
     showDialogEntryForPlayer(player, dialogSequence.entry)
 end
 
-waitForPlayerConnected = function(player: Player)
-    local startTime = time()
-    while not Globals.player_connected[player] do
-        task.wait()
-        if time() - startTime > 10 then
-            break
-        end
-    end
-end
-
 showDialogEntryForPlayer = function(player: Player, dialogEntry: DialogTypes.DialogEntry)
-    waitForPlayerConnected(player)
-    if Globals.player_connected[player] then
-        DialogEvents.events.dialogRemoteEvent:FireClient(
-            player, DialogEvents.eventStrings.dialogRemote.toClient.showDialogEntry, dialogEntry
-        )
-    end
+    BelovedRemote.fire_toClient(DialogEvents.remoteActions.toClient.showDialogEntry, player, dialogEntry)
 end
 
 clearDialogForPlayer = function(player: Player)
-    waitForPlayerConnected(player)
-    if Globals.player_connected[player] then
-        DialogEvents.events.dialogRemoteEvent:FireClient(
-            player, DialogEvents.eventStrings.dialogRemote.toClient.clearDialogEntry
-        )
-    end
+    BelovedRemote.fire_toClient(DialogEvents.remoteActions.toClient.clearDialogEntry, player)
 end
 
 onPlayerChooseOption = function(player: Player, optionId: string)

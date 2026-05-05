@@ -7,6 +7,7 @@
 
 local ContentProvider = game:GetService("ContentProvider")
 local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 ---------- Imports ----------
@@ -14,7 +15,9 @@ local Players = game:GetService("Players")
 local DialogTypes = require(script.Parent:WaitForChild("DialogTypes"))
 local DialogEvents = require(script.Parent:WaitForChild("DialogEvents"))
 
-local UIUtil = require(script.Parent.Parent:WaitForChild("UIUtil"))
+local _Modules = ReplicatedStorage:WaitForChild("Modules")
+local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
+local UIUtil = require(_Modules:WaitForChild("UIUtil"))
 
 
 ---------- Constants ----------
@@ -142,19 +145,15 @@ local writeText
 ----- Connect events -----
 
 connectDialogEvents = function()
-    -- Fire player connected event
-    DialogEvents.events.dialogRemoteEvent:FireServer(DialogEvents.eventStrings.dialogRemote.toServer.connectPlayer)
-
     -- Listen for dialog events
-    DialogEvents.events.dialogRemoteEvent.OnClientEvent:Connect(function(mode: string, ...)
-        if mode == DialogEvents.eventStrings.dialogRemote.toClient.showDialogEntry then
-            -- Show the dialog entry
-            onShowDialogEntry(...)
-        elseif mode == DialogEvents.eventStrings.dialogRemote.toClient.clearDialogEntry then
-            -- Clear the dialog entry
-            onClearDialogEntry()
-        end
+    BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.showDialogEntry, onShowDialogEntry)
+    BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.clearDialogEntry, function()
+        onClearDialogEntry()
     end)
+
+    -- Connect player
+    BelovedRemote.belovePlayer_RE_toServer(DialogEvents.remoteActions.toClient.showDialogEntry)
+    BelovedRemote.belovePlayer_RE_toServer(DialogEvents.remoteActions.toClient.clearDialogEntry)
 end
 
 connectButtonEvents = function()
@@ -220,7 +219,7 @@ onShowDialogEntry = function(dialogEntry: DialogTypes.DialogEntry)
 
         -- Query next sequence
         onQueryNextSequence()
-        DialogEvents.events.dialogRemoteEvent:FireServer(DialogEvents.eventStrings.dialogRemote.toServer.nextDialog)
+        BelovedRemote.fire_toServer(DialogEvents.remoteActions.toServer.nextDialog)
     else
         -- Apply options
         applyUIFade(Constants.dialogUIs.options_frame, true, {useFade = false, willWait = false})
@@ -368,9 +367,7 @@ applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
                 return
             end
             onQueryNextSequence()
-            DialogEvents.events.dialogRemoteEvent:FireServer(
-                DialogEvents.eventStrings.dialogRemote.toServer.chooseOption, option.id
-            )
+            BelovedRemote.fire_toServer(DialogEvents.remoteActions.toServer.chooseOption, option.id)
         end)
 
         local optionText_textLabel = newOption_textButton:WaitForChild("Text_TextLabel")
