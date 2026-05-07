@@ -1,6 +1,12 @@
 # Changelogs
 
-## [v0.0.6] Wally refactoring + Dialog info + License | 2026/05/06
+## [v0.0.7] globIgnorePaths + Wally lock | 2026/05/06 (2)
+
+Re-added global ignore paths of `**/wally.toml` to the main `default.project.json`.
+
+Removed `wally.lock` from `.gitignore`, effectively committing it.
+
+## [v0.0.6] Wally refactoring + Dialog info + License | 2026/05/06 (1)
 
 Refactored the overall file structure.
 - Added support for "Wally packaging" while keeping "Rojo place syncing" and "Luau autocomplete".
