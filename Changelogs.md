@@ -1,5 +1,23 @@
 # Changelogs
 
+## [v0.0.6] Wally refactoring + Dialog info + License | 2026/05/06
+
+Refactored the overall file structure.
+- Added support for "Wally packaging" while keeping "Rojo place syncing" and "Luau autocomplete".
+    - Main `default.project.json` in root folder for Rojo place syncing & Luau autocomplete.
+    - `wally.toml` and a secondary `default.project.json` in `src` folder for Wally packaging.
+- Changed `src/ReplicatedStorage/Modules/DialogSystem` to just `src/DialogSystem`.
+- Modified `MainClient` and `MainServer` so dependencies are referenced using parent-child relationships.
+    - Previously, the dependencies are referenced from `ReplicatedStorage` and the packages folder has to be named "Modules".
+    - This only works because the module and its dependencies are all in the "shared" realm.
+
+Moved `DialogConstants` and `DialogTypes` to be under `DialogInfo`.
+- `DialogInfo` is synced to both the `DialogSystem` module and the `DialogStorage` folder.
+
+Dialog sequences modules now reference `DialogStorage/_DialogInfo` instead of the internal modules under `DialogSystem`.
+
+Added MIT license files.
+
 ## [v0.0.5] Beloved remote migration + Dialog storage | 2026/05/04
 
 Migrated remote event usages to [BelovedRemote](https://github.com/MarioChao/beloved-remote).

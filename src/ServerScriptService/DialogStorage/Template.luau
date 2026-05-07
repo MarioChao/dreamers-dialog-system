@@ -1,15 +1,11 @@
 --!strict
 
-
----------- Services ----------
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- Template Dialog
 
 
 ---------- Imports ----------
 
-local DialogConstants = require(ReplicatedStorage.Modules.DialogSystem.DialogConstants)
-local DialogTypes = require(ReplicatedStorage.Modules.DialogSystem.DialogTypes)
+local DialogInfo = require(script.Parent:WaitForChild("_DialogInfo"))
 
 
 ---------- Module ----------
@@ -37,7 +33,7 @@ Module.start = {
         },
     },
     nextSequenceId = "dreamer_dialog",
-} :: DialogTypes.DialogSequence
+} :: DialogInfo.DialogSequence
 
 Module.dreamer_dialog = {
     sequenceId = "dreamer_dialog",
@@ -72,7 +68,7 @@ Module.dreamer_dialog = {
         rewind = "start",
         i_got_it = "have_fun",
     },
-} :: DialogTypes.DialogSequence
+} :: DialogInfo.DialogSequence
 
 Module.have_fun = {
     sequenceId = "have_fun",
@@ -82,8 +78,8 @@ Module.have_fun = {
             dialogText = "Have fun!",
         },
     },
-    nextSequenceId = DialogConstants.CLOSE_SEQUENCE_ID,
-} :: DialogTypes.DialogSequence
+    nextSequenceId = DialogInfo.constants.CLOSE_SEQUENCE_ID,
+} :: DialogInfo.DialogSequence
 
 
 ---------- Return module ----------

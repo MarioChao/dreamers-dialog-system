@@ -6,16 +6,15 @@
 ---------- Services ----------
 
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 ---------- Imports ----------
 
-local DialogConstants = require(script.Parent.DialogConstants)
-local DialogTypes = require(script.Parent.DialogTypes)
-local DialogEvents = require(script.Parent:WaitForChild("DialogEvents"))
+local _DialogSystem = script.Parent
+local DialogEvents = require(_DialogSystem:WaitForChild("DialogEvents"))
+local DialogInfo = require(_DialogSystem:WaitForChild("DialogInfo"))
 
-local _Modules = ReplicatedStorage:WaitForChild("Modules")
+local _Modules = _DialogSystem.Parent
 local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
 
 
@@ -24,8 +23,8 @@ local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
 local Globals = {}
 
 Globals.player_connected = {} :: {[Player]: boolean}
-Globals.player_dialogSequence = {} :: {[Player]: DialogTypes.DialogSequence}
-Globals.player_sequenceId_sequence = {} :: {[Player]: {[string]: DialogTypes.DialogSequence}}
+Globals.player_dialogSequence = {} :: {[Player]: DialogInfo.DialogSequence}
+Globals.player_sequenceId_sequence = {} :: {[Player]: {[string]: DialogInfo.DialogSequence}}
 
 
 ---------- Local functions ----------
@@ -60,7 +59,7 @@ end
 
 ----- Dialog -----
 
-onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[any]: DialogTypes.DialogSequence})
+onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[any]: DialogInfo.DialogSequence})
     assert(player and player:IsA("Player"), "[Dialog System]: invalid player.")
     for _, dialogSequence in dialogSequences do
         assert(dialogSequence.sequenceId, "[Dialog System]: Missing sequenceId.")
@@ -78,7 +77,7 @@ onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[an
 end
 
 getPlayerDialogSequence = function(player: Player, sequenceId: string)
-    local result: DialogTypes.DialogSequence?
+    local result: DialogInfo.DialogSequence?
     if sequenceId == nil then
         result = nil
     elseif typeof(sequenceId) == "string" then
@@ -92,7 +91,7 @@ end
 onSetDialogSequenceIdForPlayer = function(player: Player, dialogSequenceId: string, notNew: boolean?)
     assert(player and player:IsA("Player"), "[Dialog System]: invalid player.")
 
-    if dialogSequenceId == DialogConstants.CLOSE_SEQUENCE_ID then
+    if dialogSequenceId == DialogInfo.constants.CLOSE_SEQUENCE_ID then
         clearDialogForPlayer(player)
         return
     end
@@ -104,7 +103,7 @@ onSetDialogSequenceIdForPlayer = function(player: Player, dialogSequenceId: stri
     showDialogEntryForPlayer(player, dialogSequence.entry)
 end
 
-showDialogEntryForPlayer = function(player: Player, dialogEntry: DialogTypes.DialogEntry)
+showDialogEntryForPlayer = function(player: Player, dialogEntry: DialogInfo.DialogEntry)
     BelovedRemote.fire_toClient(DialogEvents.remoteActions.toClient.showDialogEntry, player, dialogEntry)
 end
 
@@ -148,7 +147,7 @@ onPlayerNextDialog = function(player: Player)
         end
     end
 
-    local nextSequenceId = dialogSequence.nextSequenceId or DialogConstants.CLOSE_SEQUENCE_ID
+    local nextSequenceId = dialogSequence.nextSequenceId or DialogInfo.constants.CLOSE_SEQUENCE_ID
     onSetDialogSequenceIdForPlayer(player, nextSequenceId)
 end
 

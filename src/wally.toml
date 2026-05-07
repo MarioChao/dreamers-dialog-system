@@ -1,0 +1,16 @@
+[package]
+name = "mariochao/dreamers-dialog-system"
+description = "Comprehensive dialog system inspired by late july, midsummer and light novels."
+
+version = "0.0.0"
+license = "MIT"
+authors = ["Mario Chao"]
+realm = "shared"
+registry = "https://github.com/UpliftGames/wally-index"
+repository = "https://github.com/MarioChao/dreamers-dialog-system"
+
+exclude = ["ServerScriptService"]
+
+[dependencies]
+BelovedRemote = "mariochao/beloved-remote@0.0.2"
+UIUtil = "mariochao/ui-util@0.0.1"

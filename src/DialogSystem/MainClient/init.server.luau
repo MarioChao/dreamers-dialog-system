@@ -7,15 +7,15 @@
 
 local ContentProvider = game:GetService("ContentProvider")
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
 ---------- Imports ----------
 
-local DialogTypes = require(script.Parent:WaitForChild("DialogTypes"))
-local DialogEvents = require(script.Parent:WaitForChild("DialogEvents"))
+local _DialogSystem = script.Parent
+local DialogEvents = require(_DialogSystem:WaitForChild("DialogEvents"))
+local DialogInfo = require(_DialogSystem:WaitForChild("DialogInfo"))
 
-local _Modules = ReplicatedStorage:WaitForChild("Modules")
+local _Modules = _DialogSystem.Parent
 local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
 local UIUtil = require(_Modules:WaitForChild("UIUtil"))
 
@@ -181,7 +181,7 @@ onClearDialogEntry = function()
     Constants.dialogUIs.screenGui.Enabled = false
 end
 
-onShowDialogEntry = function(dialogEntry: DialogTypes.DialogEntry)
+onShowDialogEntry = function(dialogEntry: DialogInfo.DialogEntry)
     -- Preload content
     preloadDialogImageData(dialogEntry.imageData or {})
 
@@ -251,7 +251,7 @@ waitSkippable = function(waitTime: number)
     end
 end
 
-applyDialogGuiStyle = function(guiStyle: DialogTypes.DialogGuiStyle)
+applyDialogGuiStyle = function(guiStyle: DialogInfo.DialogGuiStyle)
     for _, uiGradient in Constants.dialogUIs.backgroundUIGradients do
         uiGradient.Color = guiStyle.backgroundColor or Constants.dialogUIs.defaultGuiStyles.backgroundColor
     end
@@ -270,11 +270,11 @@ applyDialogGuiStyle = function(guiStyle: DialogTypes.DialogGuiStyle)
     end
 end
 
-preloadDialogImageData = function(imageData: DialogTypes.DialogImageData)
+preloadDialogImageData = function(imageData: DialogInfo.DialogImageData)
     local imageLabels = {}
 
     -- Get images
-    local function addImage(imageData: DialogTypes.DialogIndividualImageData)
+    local function addImage(imageData: DialogInfo.DialogIndividualImageData)
         if imageData.imageId then
             local imageId = imageData.imageId
             local imageLabel = Instance.new("ImageLabel")
@@ -292,18 +292,18 @@ preloadDialogImageData = function(imageData: DialogTypes.DialogImageData)
     end)
 end
 
-applyDialogImageData = function(imageData: DialogTypes.DialogImageData)
+applyDialogImageData = function(imageData: DialogInfo.DialogImageData)
     applyDialogIndividualImageData(Constants.dialogUIs.center_imageLabel, imageData.centerImage or {})
     applyDialogIndividualImageData(Constants.dialogUIs.left_imageLabel, imageData.leftImage or {})
     applyDialogIndividualImageData(Constants.dialogUIs.right_imageLabel, imageData.rightImage or {})
 end
 
-applyDialogIndividualImageData = function(imageLabel: ImageLabel, imageData: DialogTypes.DialogIndividualImageData)
+applyDialogIndividualImageData = function(imageLabel: ImageLabel, imageData: DialogInfo.DialogIndividualImageData)
     imageLabel.Image = imageData.imageId or ""
     imageLabel.Size = imageData.size or UDim2.new(1, 0, 1, 0)
 end
 
-applyDialogTextData = function(textData: DialogTypes.DialogTextData)
+applyDialogTextData = function(textData: DialogInfo.DialogTextData)
     -- Get info
     local lastSpeakerName = Constants.dialogUIs.speaker_textLabel.Text
     local targetSpeakerName = textData.speakerName or lastSpeakerName
@@ -351,7 +351,7 @@ applyUIFade = function(container: Instance, isVisible: boolean, fadeData: {useFa
     end
 end
 
-applyDialogOptionsData = function(optionsData: {DialogTypes.DialogOptionData})
+applyDialogOptionsData = function(optionsData: {DialogInfo.DialogOptionData})
     local optionCount = 0
     local optionId_info = {} :: {[string]: {
         textLabel: TextLabel,

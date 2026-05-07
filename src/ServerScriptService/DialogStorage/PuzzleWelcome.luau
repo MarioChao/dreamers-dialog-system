@@ -1,15 +1,11 @@
 --!strict
 
-
----------- Services ----------
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
+-- Puzzle Welcome Dialog
 
 
 ---------- Imports ----------
 
-local DialogConstants = require(ReplicatedStorage.Modules.DialogSystem.DialogConstants)
-local DialogTypes = require(ReplicatedStorage.Modules.DialogSystem.DialogTypes)
+local DialogInfo = require(script.Parent:WaitForChild("_DialogInfo"))
 
 
 ---------- Module ----------
@@ -34,7 +30,7 @@ Module.start = {
         },
     },
     nextSequenceId = "default2",
-} :: DialogTypes.DialogSequence
+} :: DialogInfo.DialogSequence
 
 Module.default2 = {
     sequenceId = "default2",
@@ -64,7 +60,7 @@ Module.default2 = {
         how_to_play = "option1",
         i_got_it = "have_fun",
     },
-} :: DialogTypes.DialogSequence
+} :: DialogInfo.DialogSequence
 
 Module.option1 = {
     sequenceId = "option1",
@@ -78,7 +74,7 @@ Module.option1 = {
         },
     },
     nextSequenceId = "repeated",
-} :: DialogTypes.DialogSequence
+} :: DialogInfo.DialogSequence
 
 Module.repeated = {
     sequenceId = "repeated",
@@ -93,7 +89,7 @@ Module.repeated = {
         how_to_play = "option1",
         i_got_it = "have_fun",
     },
-} :: DialogTypes.DialogSequence
+} :: DialogInfo.DialogSequence
 
 Module.have_fun = {
     sequenceId = "have_fun",
@@ -103,8 +99,8 @@ Module.have_fun = {
             dialogText = "Have fun!",
         },
     },
-    nextSequenceId = DialogConstants.CLOSE_SEQUENCE_ID,
-} :: DialogTypes.DialogSequence
+    nextSequenceId = DialogInfo.constants.CLOSE_SEQUENCE_ID,
+} :: DialogInfo.DialogSequence
 
 
 ---------- Return module ----------

@@ -5,11 +5,11 @@
 
     "ReplicatedStorage": {
       "Modules": {
-        "$path": "Packages",
+        "$path": "src/Packages",
         "$ignoreUnknownInstances": true,
 
         "DialogSystem": {
-          "$path": "src/ReplicatedStorage/Modules/DialogSystem"
+          "$path": "src/DialogSystem"
         }
       }
     },
@@ -24,6 +24,5 @@
         "$ignoreUnknownInstances": true
       }
     }
-  },
-  "globIgnorePaths": ["**/wally.toml"]
+  }
 }
