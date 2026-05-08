@@ -1,5 +1,20 @@
 # Changelogs
 
+## [v0.0.8] Updated typewriter | 2026/05/07
+
+Factored out typewriting code from `MainClient` into the [TextTypewriter](https://github.com/MarioChao/text-typewriter) module.
+- Added pause delays for punctuations.
+- Added sound effects while writing characters.
+- Added a customizable callback while writing characters.
+
+Slightly updated the `DialogEntry` type.
+- `options` field is moved to the new `optionsData` field.
+- New `typewriterData` fields for `textData` and `optionsData`.
+
+Slightly updated `MainServer`.
+- Fixed a memory leak when player leaves.
+- Made some small code cleaner.
+
 ## [v0.0.7] globIgnorePaths + Wally lock | 2026/05/06 (2)
 
 Re-added global ignore paths of `**/wally.toml` to the main `default.project.json`.

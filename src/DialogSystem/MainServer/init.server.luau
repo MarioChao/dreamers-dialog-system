@@ -22,14 +22,16 @@ local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
 
 local Globals = {}
 
-Globals.player_connected = {} :: {[Player]: boolean}
-Globals.player_dialogSequence = {} :: {[Player]: DialogInfo.DialogSequence}
-Globals.player_sequenceId_sequence = {} :: {[Player]: {[string]: DialogInfo.DialogSequence}}
+Globals.player_dialogSequence = {} :: {[Player]: DialogInfo.DialogSequence?}
+Globals.player_sequenceId_sequence = {} :: {[Player]: {[string]: DialogInfo.DialogSequence?}?}
 
 
 ---------- Local functions ----------
 
 local connectDialogEvents
+
+local getOrCreatePlayerInfo_sequenceId_sequence
+
 local onStoreDialogSequencesForPlayer
 local onSetDialogSequenceIdForPlayer
 local getPlayerDialogSequence
@@ -57,6 +59,21 @@ connectDialogEvents = function()
 end
 
 
+----- Player info -----
+
+getOrCreatePlayerInfo_sequenceId_sequence = function(player: Player)
+    local value = Globals.player_sequenceId_sequence[player]
+    local result
+    if value then
+        result = value
+    else
+        result = {}
+        Globals.player_sequenceId_sequence[player] = result
+    end
+    return result
+end
+
+
 ----- Dialog -----
 
 onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[any]: DialogInfo.DialogSequence})
@@ -69,10 +86,8 @@ onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[an
                 `dialog sequence {dialogSequence.sequenceId}.`
             )
         end
-        if not Globals.player_sequenceId_sequence[player] then
-            Globals.player_sequenceId_sequence[player] = {}
-        end
-        Globals.player_sequenceId_sequence[player][dialogSequence.sequenceId] = dialogSequence
+        local sequenceId_sequence = getOrCreatePlayerInfo_sequenceId_sequence(player)
+        sequenceId_sequence[dialogSequence.sequenceId] = dialogSequence
     end
 end
 
@@ -82,7 +97,8 @@ getPlayerDialogSequence = function(player: Player, sequenceId: string)
         result = nil
     elseif typeof(sequenceId) == "string" then
         if Globals.player_sequenceId_sequence[player] then
-            result = Globals.player_sequenceId_sequence[player][sequenceId]
+            local sequenceId_sequence = getOrCreatePlayerInfo_sequenceId_sequence(player)
+            result = sequenceId_sequence[sequenceId]
         end
     end
     return result
@@ -157,7 +173,8 @@ end
 local function main()
     connectDialogEvents()
     Players.PlayerRemoving:Connect(function(player: Player)
-        Globals.player_connected[player] = nil
+        Globals.player_dialogSequence[player] = nil
+        Globals.player_sequenceId_sequence[player] = nil
     end)
 end
 

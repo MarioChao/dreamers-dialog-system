@@ -17,6 +17,7 @@ local DialogInfo = require(_DialogSystem:WaitForChild("DialogInfo"))
 
 local _Modules = _DialogSystem.Parent
 local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
+local TextTypewriter = require(_Modules:WaitForChild("TextTypewriter"))
 local UIUtil = require(_Modules:WaitForChild("UIUtil"))
 
 
@@ -27,7 +28,23 @@ local Constants = {}
 Constants.localPlayer = Players.LocalPlayer or Players:GetPropertyChangedSignal("LocalPlayer"):Wait()
 Constants.playerGui = Constants.localPlayer.PlayerGui
 
+Constants.typingSoundsFolder = script:WaitForChild("TypingSounds")
+
 Constants.defaultCharSpeed = 48
+Constants.defaultRegex_pauseDelay = {
+    ["[%w]%s"] = 0.02,
+    ["[%w]$"] = 0.02,
+
+    ["[,]%s"] = 0.1,
+    ["[,]$"] = 0.1,
+
+    ["[%.%?!]%s"] = 0.3,
+    ["[%.%?!]$"] = 0.3,
+
+    ["%.%.%.%s"] = 0.5,
+    ["%.%.%.$"] = 0.5,
+} :: {[string]: number?}
+Constants.defaultCharSounds = Constants.typingSoundsFolder:GetChildren()
 Constants.fadeTweenInfo = TweenInfo.new(0.6)
 
 Constants.defaultDialogScreenGui = script.Parent:WaitForChild("Dialog_ScreenGui")
@@ -115,7 +132,8 @@ local Globals = {}
 
 Globals.optionTextButtons = {} :: {typeof(Constants.dialogUIs.defaultOption_textButton)}
 Globals.isEntryButtonClicked = false
-Globals.charSpeed = Constants.defaultCharSpeed
+
+Globals.typewriter = TextTypewriter.new()
 
 Globals.isPreviousFadeInProgress = false
 
@@ -125,21 +143,23 @@ Globals.isPreviousFadeInProgress = false
 local connectDialogEvents
 local connectButtonEvents
 
+local setIsEntryButtonClicked
+
 local onQueryNextSequence
 local onClearDialogEntry
 local onShowDialogEntry
 local setEmptyDialog
 local clearPreviousDialog
 local waitSkippable
+
 local applyDialogGuiStyle
 local preloadDialogImageData
 local applyDialogImageData
 local applyDialogIndividualImageData
+local applyTypewriterData
 local applyDialogTextData
 local applyUIFade
 local applyDialogOptionsData
-
-local writeText
 
 
 ----- Connect events -----
@@ -158,8 +178,16 @@ end
 
 connectButtonEvents = function()
     Constants.dialogUIs.entryButton.MouseButton1Click:Connect(function()
-        Globals.isEntryButtonClicked = true
+        setIsEntryButtonClicked(true)
     end)
+end
+
+
+----- Entry button clicked -----
+
+setIsEntryButtonClicked = function(isEntryButtonClicked: boolean)
+    Globals.isEntryButtonClicked = isEntryButtonClicked
+    Globals.typewriter:setIsSkipping(isEntryButtonClicked)
 end
 
 
@@ -200,19 +228,19 @@ onShowDialogEntry = function(dialogEntry: DialogInfo.DialogEntry)
     end
 
     -- Show dialog entry
-    Globals.isEntryButtonClicked = false
+    setIsEntryButtonClicked(false)
     applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, false, {useFade = false, willWait = false})
     applyDialogGuiStyle(dialogEntry.dialogGuiStyle or {})
     applyDialogImageData(dialogEntry.imageData or {})
     applyDialogTextData(dialogEntry.textData)
 
     -- Check options
-    if dialogEntry.options == nil or next(dialogEntry.options) == nil then
+    if dialogEntry.optionsData == nil or next(dialogEntry.optionsData.options or {}) == nil then
         --[[ Proceed to next sequence if no option ]]
 
         -- Wait for player click
         applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, true, {useFade = true, willWait = false})
-        Globals.isEntryButtonClicked = false
+        setIsEntryButtonClicked(false)
         while not Globals.isEntryButtonClicked do
             task.wait()
         end
@@ -223,7 +251,7 @@ onShowDialogEntry = function(dialogEntry: DialogInfo.DialogEntry)
     else
         -- Apply options
         applyUIFade(Constants.dialogUIs.options_frame, true, {useFade = false, willWait = false})
-        applyDialogOptionsData(dialogEntry.options)
+        applyDialogOptionsData(dialogEntry.optionsData)
     end
 end
 
@@ -250,6 +278,9 @@ waitSkippable = function(waitTime: number)
         task.wait()
     end
 end
+
+
+----- Dialog styles -----
 
 applyDialogGuiStyle = function(guiStyle: DialogInfo.DialogGuiStyle)
     for _, uiGradient in Constants.dialogUIs.backgroundUIGradients do
@@ -303,12 +334,23 @@ applyDialogIndividualImageData = function(imageLabel: ImageLabel, imageData: Dia
     imageLabel.Size = imageData.size or UDim2.new(1, 0, 1, 0)
 end
 
+applyTypewriterData = function(typewriter: typeof(TextTypewriter.new()), typewriterData: DialogInfo.TypewriterData)
+    local charSpeed = typewriterData.charSpeed or Constants.defaultCharSpeed
+    local regex_pauseDelay = typewriterData.regex_pauseDelay or Constants.defaultRegex_pauseDelay
+    local charSounds = typewriterData.charSounds or Constants.defaultCharSounds
+    typewriter:setCharSpeed(charSpeed)
+    typewriter:setRegexPauseDelay(regex_pauseDelay)
+    typewriter:setSoundPerChar(charSounds, "%w")
+end
+
 applyDialogTextData = function(textData: DialogInfo.DialogTextData)
     -- Get info
     local lastSpeakerName = Constants.dialogUIs.speaker_textLabel.Text
     local targetSpeakerName = textData.speakerName or lastSpeakerName
     local targetDialogText = textData.dialogText
-    Globals.charSpeed = textData.charSpeed or Constants.defaultCharSpeed
+
+    -- Config typewriter
+    applyTypewriterData(Globals.typewriter, textData.typewriterData or {})
 
     -- Write speaker name if needed
     Constants.dialogUIs.dialogText_textLabel.Text = ""
@@ -319,14 +361,14 @@ applyDialogTextData = function(textData: DialogInfo.DialogTextData)
             task.wait()
             applyUIFade(Constants.dialogUIs.speaker_textLabel, true, {useFade = false, willWait = false})
         end
-        writeText(Constants.dialogUIs.speaker_textLabel, targetSpeakerName, Globals.charSpeed, true)
+        Globals.typewriter:writeText(Constants.dialogUIs.speaker_textLabel, targetSpeakerName, true)
         waitSkippable(0.5)
     end
 
     -- Write dialog text
     task.wait()
     applyUIFade(Constants.dialogUIs.dialogText_textLabel, true, {useFade = false, willWait = false})
-    writeText(Constants.dialogUIs.dialogText_textLabel, targetDialogText, Globals.charSpeed, true)
+    Globals.typewriter:writeText(Constants.dialogUIs.dialogText_textLabel, targetDialogText, true)
     task.wait(0.5)
 end
 
@@ -351,13 +393,15 @@ applyUIFade = function(container: Instance, isVisible: boolean, fadeData: {useFa
     end
 end
 
-applyDialogOptionsData = function(optionsData: {DialogInfo.DialogOptionData})
+applyDialogOptionsData = function(optionsData: DialogInfo.DialogOptionsData)
     local optionCount = 0
     local optionId_info = {} :: {[string]: {
         textLabel: TextLabel,
         text: string,
     }}
-    for _, option in optionsData do
+
+    -- Create options
+    for _, option in optionsData.options do
         optionCount += 1
         local newOption_textButton = Constants.dialogUIs.defaultOption_textButton:Clone()
         newOption_textButton.LayoutOrder = optionCount
@@ -383,43 +427,12 @@ applyDialogOptionsData = function(optionsData: {DialogInfo.DialogOptionData})
         newOption_textButton.Parent = Constants.dialogUIs.options_frame
     end
 
+    -- Write texts
+    applyTypewriterData(Globals.typewriter, optionsData.typewriterData or {})
     for _, optionInfo in optionId_info do
         task.defer(function()
-            writeText(optionInfo.textLabel, optionInfo.text, Globals.charSpeed, false)
+            Globals.typewriter:writeText(optionInfo.textLabel, optionInfo.text, false)
         end)
-    end
-end
-
-
------ Transition -----
-
-writeText = function(textInstance: Instance, text: string, charSpeed: number, skippable: boolean)
-    if textInstance:IsA("TextBox") or textInstance:IsA("TextButton") or textInstance:IsA("TextLabel") then
-        local tempInstance = textInstance :: TextLabel
-        tempInstance.Text = ""
-
-        local typedMessage = ""
-        local typedCharCount = 0
-        local messageLength = string.len(text)
-        local startTime = time()
-        while true do
-            if skippable and Globals.isEntryButtonClicked then
-                break
-            end
-            while typedCharCount >= (time() - startTime) * charSpeed do
-                if skippable and Globals.isEntryButtonClicked then
-                    break
-                end
-                task.wait()
-            end
-            typedCharCount += 1
-            if typedCharCount >= messageLength then
-                break
-            end
-            typedMessage ..= string.sub(text, typedCharCount, typedCharCount)
-            tempInstance.Text = typedMessage
-        end
-        tempInstance.Text = text
     end
 end
 

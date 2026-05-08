@@ -10,7 +10,12 @@ dependencies = []
 [[package]]
 name = "mariochao/dreamers-dialog-system"
 version = "0.0.0"
-dependencies = [["BelovedRemote", "mariochao/beloved-remote@0.0.2"], ["UIUtil", "mariochao/ui-util@0.0.1"]]
+dependencies = [["BelovedRemote", "mariochao/beloved-remote@0.0.2"], ["TextTypewriter", "mariochao/text-typewriter@0.0.0"], ["UIUtil", "mariochao/ui-util@0.0.1"]]
+
+[[package]]
+name = "mariochao/text-typewriter"
+version = "0.0.0"
+dependencies = []
 
 [[package]]
 name = "mariochao/ui-util"

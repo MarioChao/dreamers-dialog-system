@@ -1,0 +1,32 @@
+{
+    "className": "Folder",
+    "children": [
+        {
+            "className": "Sound",
+            "name": "ClickFast",
+            "properties": {
+                "SoundId": "rbxassetid://12221976",
+                "PlaybackSpeed": 1.26,
+                "Volume": 0.7
+            }
+        },
+        {
+            "className": "Sound",
+            "name": "ClickFast",
+            "properties": {
+                "SoundId": "rbxassetid://12221976",
+                "PlaybackSpeed": 1.42,
+                "Volume": 0.7
+            }
+        },
+        {
+            "className": "Sound",
+            "name": "ClickFast",
+            "properties": {
+                "SoundId": "rbxassetid://12221976",
+                "PlaybackSpeed": 1.59,
+                "Volume": 0.7
+            }
+        }
+    ]
+}

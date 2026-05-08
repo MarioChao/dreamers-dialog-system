@@ -52,15 +52,23 @@ Module.dreamer_dialog = {
         },
         textData = {
             dialogText = "This is dreamer's dialog system!",
-        },
-        options = {
-            {
-                id = "rewind",
-                text = "Can you go back to the previous prompt?",
+            typewriterData = {
+                charSpeed = 36,
             },
-            {
-                id = "i_got_it",
-                text = "I got it!",
+        },
+        optionsData = {
+            options = {
+                {
+                    id = "rewind",
+                    text = "Can you go back to the previous prompt?",
+                },
+                {
+                    id = "i_got_it",
+                    text = "I got it!",
+                },
+            },
+            typewriterData = {
+                charSpeed = 24,
             },
         },
     },

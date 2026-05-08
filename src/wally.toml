@@ -13,4 +13,5 @@ exclude = ["ServerScriptService"]
 
 [dependencies]
 BelovedRemote = "mariochao/beloved-remote@0.0.2"
+TextTypewriter = "mariochao/text-typewriter@0.0.0"
 UIUtil = "mariochao/ui-util@0.0.1"

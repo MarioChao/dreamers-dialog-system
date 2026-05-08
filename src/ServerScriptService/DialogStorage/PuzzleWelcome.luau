@@ -45,14 +45,16 @@ Module.default2 = {
             speakerName = "Panicks28 - Game Creator",
             dialogText = "To start, vote for a puzzle by stepping on one of the plates with red outlines!",
         },
-        options = {
-            {
-                id = "how_to_play",
-                text = "How to play the game?",
-            },
-            {
-                id = "i_got_it",
-                text = "I got it!",
+        optionsData = {
+            options = {
+                {
+                    id = "how_to_play",
+                    text = "How to play the game?",
+                },
+                {
+                    id = "i_got_it",
+                    text = "I got it!",
+                },
             },
         },
     },
@@ -83,7 +85,7 @@ Module.repeated = {
         textData = {
             dialogText = "Any more questions?",
         },
-        options = Module.default2.entry.options,
+        optionsData = Module.default2.entry.optionsData,
     },
     optionId_sequenceId = {
         how_to_play = "option1",

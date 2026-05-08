@@ -24,22 +24,33 @@ export type DialogImageData = {
     rightImage: DialogIndividualImageData?,
 }
 
+export type TypewriterData = {
+    charSpeed: number?,
+    regex_pauseDelay: {[string]: number?}?,
+    charSounds: {Sound}?,
+}
+
 export type DialogTextData = {
     dialogText: string,
     speakerName: string?,
-    charSpeed: number?,
+    typewriterData: TypewriterData?,
 }
 
-export type DialogOptionData = {
+export type DialogSingleOptionData = {
     id: string,
     text: string,
+}
+
+export type DialogOptionsData = {
+    options: {DialogSingleOptionData},
+    typewriterData: TypewriterData?,
 }
 
 export type DialogEntry = {
     dialogGuiStyle: DialogGuiStyle?,
     imageData: DialogImageData?,
     textData: DialogTextData,
-    options: {DialogOptionData}?,
+    optionsData: DialogOptionsData?,
 }
 
 export type DialogSequence = {
