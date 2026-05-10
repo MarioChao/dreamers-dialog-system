@@ -135,6 +135,7 @@ Globals.typewriter = TextTypewriter.new()
 Globals.isPreviousFadeInProgress = false
 
 Globals.showDialogEntryThread = nil :: thread?
+Globals.clearDialogEntryThread = nil :: thread?
 Globals.optionTextThreads = {} :: {thread}
 
 
@@ -146,6 +147,8 @@ local connectButtonEvents
 local setIsEntryButtonClicked
 
 local onQueryNextSequence
+local cancelThreads
+local onClearDialogEntryProxy
 local onClearDialogEntry
 local onShowDialogEntryProxy
 local onShowDialogEntry
@@ -168,9 +171,7 @@ local applyDialogOptionsData
 connectDialogEvents = function()
     -- Listen for dialog events
     BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.showDialogEntry, onShowDialogEntryProxy)
-    BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.clearDialogEntry, function()
-        onClearDialogEntry()
-    end)
+    BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.clearDialogEntry, onClearDialogEntryProxy)
 
     -- Connect player
     BelovedRemote.belovePlayer_RE_toServer(DialogEvents.remoteActions.toClient.showDialogEntry)
@@ -204,6 +205,26 @@ onQueryNextSequence = function()
     end)
 end
 
+cancelThreads = function()
+    if Globals.showDialogEntryThread then
+        task.cancel(Globals.showDialogEntryThread)
+        Globals.showDialogEntryThread = nil
+    end
+    if Globals.clearDialogEntryThread then
+        task.cancel(Globals.clearDialogEntryThread)
+        Globals.clearDialogEntryThread = nil
+    end
+    for _, thread in Globals.optionTextThreads do
+        task.cancel(thread)
+    end
+    table.clear(Globals.optionTextThreads)
+end
+
+onClearDialogEntryProxy = function()
+    cancelThreads()
+    Globals.clearDialogEntryThread = task.defer(onClearDialogEntry)
+end
+
 onClearDialogEntry = function()
     clearPreviousDialog()
     applyUIFade(Constants.dialogUIs.screenGui, false, {useFade = true, willWait = true})
@@ -211,12 +232,7 @@ onClearDialogEntry = function()
 end
 
 onShowDialogEntryProxy = function(dialogEntry: DialogInfo.DialogEntry)
-    if Globals.showDialogEntryThread then
-        task.cancel(Globals.showDialogEntryThread)
-    end
-    for _, thread in Globals.optionTextThreads do
-        task.cancel(thread)
-    end
+    cancelThreads()
     Globals.showDialogEntryThread = task.defer(onShowDialogEntry, dialogEntry)
 end
 
@@ -235,8 +251,8 @@ onShowDialogEntry = function(dialogEntry: DialogInfo.DialogEntry)
         applyUIFade(Constants.dialogUIs.screenGui, false, {useFade = false, willWait = false})
         setEmptyDialog()
         Constants.dialogUIs.screenGui.Enabled = true
-        applyUIFade(Constants.dialogUIs.screenGui, true, {useFade = true, willWait = false})
     end
+    applyUIFade(Constants.dialogUIs.screenGui, true, {useFade = true, willWait = false})
 
     -- Show dialog entry
     setIsEntryButtonClicked(false)

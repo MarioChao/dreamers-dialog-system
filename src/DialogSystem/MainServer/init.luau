@@ -1,11 +1,12 @@
 --!strict
 
--- Dialog Main Client
+-- Dialog Main Server
 
 
 ---------- Services ----------
 
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 
 ---------- Imports ----------
@@ -41,7 +42,6 @@ local clearDialogForPlayer
 local onPlayerChooseOption
 local onPlayerNextDialog
 
-local onDialogBindableFunctionInvoke
 local getIsPlayerInDialog
 
 
@@ -51,18 +51,6 @@ connectDialogEvents = function()
     -- Listen for client dialog events
     BelovedRemote.connect_toServer(DialogEvents.remoteActions.toServer.chooseOption, onPlayerChooseOption)
     BelovedRemote.connect_toServer(DialogEvents.remoteActions.toServer.nextDialog, onPlayerNextDialog)
-
-    -- Listen for server dialog events
-    DialogEvents.events.dialogBindableEvent.Event:Connect(function(mode: string, ...)
-        if mode == DialogEvents.eventStrings.dialogBindable.storeDialogSequencesForPlayer then
-            onStoreDialogSequencesForPlayer(...)
-        elseif mode == DialogEvents.eventStrings.dialogBindable.setDialogSequenceIdForPlayer then
-            onSetDialogSequenceIdForPlayer(...)
-        end
-    end)
-
-    -- Set server dialog invokes
-    DialogEvents.events.dialogBindableFunction.OnInvoke = onDialogBindableFunctionInvoke
 end
 
 
@@ -178,14 +166,7 @@ onPlayerNextDialog = function(player: Player)
 end
 
 
------ Dialog invoke -----
-
-onDialogBindableFunctionInvoke = function(mode: string, ...): any
-    if mode == DialogEvents.eventStrings.dialogBindableFunction.getIsPlayerInDialog then
-        return getIsPlayerInDialog(...)
-    end
-    return nil
-end
+----- Dialog state -----
 
 getIsPlayerInDialog = function(player: Player): boolean
     return Globals.player_isInDialog[player] == true
@@ -195,15 +176,39 @@ end
 ----- Main -----
 
 local function main()
-    connectDialogEvents()
-    Players.PlayerRemoving:Connect(function(player: Player)
-        Globals.player_dialogSequence[player] = nil
-        Globals.player_sequenceId_sequence[player] = nil
-        Globals.player_isInDialog[player] = nil
-    end)
+    if RunService:IsServer() then
+        connectDialogEvents()
+        Players.PlayerRemoving:Connect(function(player: Player)
+            Globals.player_dialogSequence[player] = nil
+            Globals.player_sequenceId_sequence[player] = nil
+            Globals.player_isInDialog[player] = nil
+        end)
+    else
+        warn("[Dialog System]: MainServer should only be required on the server!")
+    end
 end
 
 
 ---------- Calling function ----------
 
 main()
+
+
+---------- Module ----------
+
+local Module = {}
+
+
+----- Module fields -----
+
+Module.storeDialogSequencesForPlayer = onStoreDialogSequencesForPlayer
+
+Module.setDialogSequenceIdForPlayer = onSetDialogSequenceIdForPlayer
+
+Module.getIsPlayerInDialog = getIsPlayerInDialog
+
+
+---------- Return module ----------
+
+table.freeze(Module)
+return Module

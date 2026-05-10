@@ -1,5 +1,11 @@
 # Changelogs
 
+## [v0.0.10] Removed bindables + Clear entry race condition | 2026/05/10
+
+Removed uses of bindable events and bindable functions by migrating `MainServer` to a module.
+
+Fixed race conditions in `MainClient` that occurs with clearing dialog.
+
 ## [v0.0.9] Graphemes + Optimizations + Race condition | 2026/05/09
 
 Updated `TextTypewriter` to a newer version that operates on graphemes.

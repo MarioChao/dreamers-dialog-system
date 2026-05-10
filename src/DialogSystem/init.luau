@@ -17,8 +17,8 @@ end
 
 ---------- Imports ----------
 
-local DialogEvents = require(script:WaitForChild("DialogEvents"))
 local DialogInfo = require(script:WaitForChild("DialogInfo"))
+local MainServer = require(script:WaitForChild("MainServer"))
 
 
 ---------- Types ----------
@@ -36,23 +36,15 @@ local Module = {}
 ----- Module functions -----
 
 function Module.storeDialogSequencesForPlayer(player: Player, dialogSequences: {[any]: DialogInfo.DialogSequence})
-    DialogEvents.events.dialogBindableEvent:Fire(
-        DialogEvents.eventStrings.dialogBindable.storeDialogSequencesForPlayer,
-        player, dialogSequences
-    )
+    MainServer.storeDialogSequencesForPlayer(player, dialogSequences)
 end
 
 function Module.setDialogSequenceIdForPlayer(player: Player, dialogSequenceId: string)
-    DialogEvents.events.dialogBindableEvent:Fire(
-        DialogEvents.eventStrings.dialogBindable.setDialogSequenceIdForPlayer,
-        player, dialogSequenceId
-    )
+    MainServer.setDialogSequenceIdForPlayer(player, dialogSequenceId)
 end
 
 function Module.getIsPlayerInDialog(player: Player)
-    return DialogEvents.events.dialogBindableFunction:Invoke(
-        DialogEvents.eventStrings.dialogBindableFunction.getIsPlayerInDialog, player
-    )
+    return MainServer.getIsPlayerInDialog(player)
 end
 
 
