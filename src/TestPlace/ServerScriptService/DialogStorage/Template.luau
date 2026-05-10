@@ -27,7 +27,7 @@ Module.start = {
         textData = {
             speakerName = "Panicks28 - Game Creator",
             dialogText = (
-                "Hello.\n" ..
+                "Hello. 👋!\n" ..
                 "Welcome to the game!"
             ),
         },
@@ -68,7 +68,7 @@ Module.dreamer_dialog = {
                 },
             },
             typewriterData = {
-                charSpeed = 24,
+                charSpeed = 32,
             },
         },
     },

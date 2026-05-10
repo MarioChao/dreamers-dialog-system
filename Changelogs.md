@@ -1,5 +1,26 @@
 # Changelogs
 
+## [v0.0.9] Graphemes + Optimizations + Race condition | 2026/05/09
+
+Updated `TextTypewriter` to a newer version that operates on graphemes.
+
+Removed pauses on space characters.
+
+When storing new dialog sequences in `MainServer`, the old sequences for the player are now cleared.
+
+Slightly fixed weird behavior when showing multiple dialog sequences at the same time (`MainClient`).
+- Used `onShowDialogEntryProxy()` to ensure methods run in at most one thread at a time.
+- Existing threads are cancelled to allow the newest one to run, avoiding blocking.
+
+Moved `ServerScriptService` folder to be under the new `TestPlace` folder.
+
+Factored out code for interfacing `DialogSystem` and `DialogStorage` from the `DialogMain` script to the `DialogActions` module.
+- Added a method to `DialogActions` to set dialog using the name of the sequences module in `DialogStorage`.
+
+Added support for checking if player is currently in a dialog.
+- Added new `getIsPlayerInDialog()` method to `DialogSystem`.
+- Added the `willOverwriteExisting` parameter to the new method in `DialogActions`.
+
 ## [v0.0.8] Updated typewriter | 2026/05/07
 
 Factored out typewriting code from `MainClient` into the [TextTypewriter](https://github.com/MarioChao/text-typewriter) module.

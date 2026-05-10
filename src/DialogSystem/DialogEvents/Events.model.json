@@ -4,6 +4,10 @@
         {
             "className": "BindableEvent",
             "name": "DialogBindableEvent"
+        },
+        {
+            "className": "BindableFunction",
+            "name": "DialogBindableFunction"
         }
     ]
 }

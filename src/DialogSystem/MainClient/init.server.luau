@@ -32,9 +32,6 @@ Constants.typingSoundsFolder = script:WaitForChild("TypingSounds")
 
 Constants.defaultCharSpeed = 48
 Constants.defaultRegex_pauseDelay = {
-    ["[%w]%s"] = 0.02,
-    ["[%w]$"] = 0.02,
-
     ["[,]%s"] = 0.1,
     ["[,]$"] = 0.1,
 
@@ -137,6 +134,9 @@ Globals.typewriter = TextTypewriter.new()
 
 Globals.isPreviousFadeInProgress = false
 
+Globals.showDialogEntryThread = nil :: thread?
+Globals.optionTextThreads = {} :: {thread}
+
 
 ---------- Local functions ----------
 
@@ -147,6 +147,7 @@ local setIsEntryButtonClicked
 
 local onQueryNextSequence
 local onClearDialogEntry
+local onShowDialogEntryProxy
 local onShowDialogEntry
 local setEmptyDialog
 local clearPreviousDialog
@@ -166,7 +167,7 @@ local applyDialogOptionsData
 
 connectDialogEvents = function()
     -- Listen for dialog events
-    BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.showDialogEntry, onShowDialogEntry)
+    BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.showDialogEntry, onShowDialogEntryProxy)
     BelovedRemote.connect_toClient(DialogEvents.remoteActions.toClient.clearDialogEntry, function()
         onClearDialogEntry()
     end)
@@ -207,6 +208,16 @@ onClearDialogEntry = function()
     clearPreviousDialog()
     applyUIFade(Constants.dialogUIs.screenGui, false, {useFade = true, willWait = true})
     Constants.dialogUIs.screenGui.Enabled = false
+end
+
+onShowDialogEntryProxy = function(dialogEntry: DialogInfo.DialogEntry)
+    if Globals.showDialogEntryThread then
+        task.cancel(Globals.showDialogEntryThread)
+    end
+    for _, thread in Globals.optionTextThreads do
+        task.cancel(thread)
+    end
+    Globals.showDialogEntryThread = task.defer(onShowDialogEntry, dialogEntry)
 end
 
 onShowDialogEntry = function(dialogEntry: DialogInfo.DialogEntry)
@@ -340,7 +351,7 @@ applyTypewriterData = function(typewriter: typeof(TextTypewriter.new()), typewri
     local charSounds = typewriterData.charSounds or Constants.defaultCharSounds
     typewriter:setCharSpeed(charSpeed)
     typewriter:setRegexPauseDelay(regex_pauseDelay)
-    typewriter:setSoundPerChar(charSounds, "%w")
+    typewriter:setSoundPerChar(charSounds, "[^%s]")
 end
 
 applyDialogTextData = function(textData: DialogInfo.DialogTextData)
@@ -429,10 +440,11 @@ applyDialogOptionsData = function(optionsData: DialogInfo.DialogOptionsData)
 
     -- Write texts
     applyTypewriterData(Globals.typewriter, optionsData.typewriterData or {})
+    Globals.optionTextThreads = {}
     for _, optionInfo in optionId_info do
-        task.defer(function()
+        table.insert(Globals.optionTextThreads, task.defer(function()
             Globals.typewriter:writeText(optionInfo.textLabel, optionInfo.text, false)
-        end)
+        end))
     end
 end
 

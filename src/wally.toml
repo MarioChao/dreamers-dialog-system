@@ -9,9 +9,9 @@ realm = "shared"
 registry = "https://github.com/UpliftGames/wally-index"
 repository = "https://github.com/MarioChao/dreamers-dialog-system"
 
-exclude = ["ServerScriptService"]
+exclude = ["TestPlace"]
 
 [dependencies]
 BelovedRemote = "mariochao/beloved-remote@0.0.2"
-TextTypewriter = "mariochao/text-typewriter@0.0.0"
+TextTypewriter = "mariochao/text-typewriter@0.0.1"
 UIUtil = "mariochao/ui-util@0.0.1"

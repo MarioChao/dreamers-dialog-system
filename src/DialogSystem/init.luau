@@ -49,6 +49,12 @@ function Module.setDialogSequenceIdForPlayer(player: Player, dialogSequenceId: s
     )
 end
 
+function Module.getIsPlayerInDialog(player: Player)
+    return DialogEvents.events.dialogBindableFunction:Invoke(
+        DialogEvents.eventStrings.dialogBindableFunction.getIsPlayerInDialog, player
+    )
+end
+
 
 ----- Module fields -----
 

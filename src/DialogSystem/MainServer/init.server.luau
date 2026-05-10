@@ -24,6 +24,7 @@ local Globals = {}
 
 Globals.player_dialogSequence = {} :: {[Player]: DialogInfo.DialogSequence?}
 Globals.player_sequenceId_sequence = {} :: {[Player]: {[string]: DialogInfo.DialogSequence?}?}
+Globals.player_isInDialog = {} :: {[Player]: true?}
 
 
 ---------- Local functions ----------
@@ -39,6 +40,9 @@ local showDialogEntryForPlayer
 local clearDialogForPlayer
 local onPlayerChooseOption
 local onPlayerNextDialog
+
+local onDialogBindableFunctionInvoke
+local getIsPlayerInDialog
 
 
 ----- Connect events -----
@@ -56,6 +60,9 @@ connectDialogEvents = function()
             onSetDialogSequenceIdForPlayer(...)
         end
     end)
+
+    -- Set server dialog invokes
+    DialogEvents.events.dialogBindableFunction.OnInvoke = onDialogBindableFunctionInvoke
 end
 
 
@@ -78,6 +85,8 @@ end
 
 onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[any]: DialogInfo.DialogSequence})
     assert(player and player:IsA("Player"), "[Dialog System]: invalid player.")
+    local sequenceId_sequence = getOrCreatePlayerInfo_sequenceId_sequence(player)
+    table.clear(sequenceId_sequence)
     for _, dialogSequence in dialogSequences do
         assert(dialogSequence.sequenceId, "[Dialog System]: Missing sequenceId.")
         if not (dialogSequence.nextSequenceId or dialogSequence.optionId_sequenceId) then
@@ -86,7 +95,6 @@ onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[an
                 `dialog sequence {dialogSequence.sequenceId}.`
             )
         end
-        local sequenceId_sequence = getOrCreatePlayerInfo_sequenceId_sequence(player)
         sequenceId_sequence[dialogSequence.sequenceId] = dialogSequence
     end
 end
@@ -121,10 +129,12 @@ end
 
 showDialogEntryForPlayer = function(player: Player, dialogEntry: DialogInfo.DialogEntry)
     BelovedRemote.fire_toClient(DialogEvents.remoteActions.toClient.showDialogEntry, player, dialogEntry)
+    Globals.player_isInDialog[player] = true
 end
 
 clearDialogForPlayer = function(player: Player)
     BelovedRemote.fire_toClient(DialogEvents.remoteActions.toClient.clearDialogEntry, player)
+    Globals.player_isInDialog[player] = nil
 end
 
 onPlayerChooseOption = function(player: Player, optionId: string)
@@ -168,6 +178,20 @@ onPlayerNextDialog = function(player: Player)
 end
 
 
+----- Dialog invoke -----
+
+onDialogBindableFunctionInvoke = function(mode: string, ...): any
+    if mode == DialogEvents.eventStrings.dialogBindableFunction.getIsPlayerInDialog then
+        return getIsPlayerInDialog(...)
+    end
+    return nil
+end
+
+getIsPlayerInDialog = function(player: Player): boolean
+    return Globals.player_isInDialog[player] == true
+end
+
+
 ----- Main -----
 
 local function main()
@@ -175,6 +199,7 @@ local function main()
     Players.PlayerRemoving:Connect(function(player: Player)
         Globals.player_dialogSequence[player] = nil
         Globals.player_sequenceId_sequence[player] = nil
+        Globals.player_isInDialog[player] = nil
     end)
 end
 

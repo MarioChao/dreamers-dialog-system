@@ -16,11 +16,11 @@
 
     "ServerScriptService": {
       "DialogStorage": {
-        "$path": "src/ServerScriptService/DialogStorage",
+        "$path": "src/TestPlace/ServerScriptService/DialogStorage",
         "$ignoreUnknownInstances": true
       },
       "Scripts": {
-        "$path": "src/ServerScriptService/Scripts",
+        "$path": "src/TestPlace/ServerScriptService/Scripts",
         "$ignoreUnknownInstances": true
       }
     }
