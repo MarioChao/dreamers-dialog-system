@@ -5,7 +5,9 @@
 
 ---------- Imports ----------
 
-local DialogInfo = require(script.Parent:WaitForChild("_DialogInfo"))
+local _Assets = script.Parent:WaitForChild("_Assets")
+local DialogInfo = require(_Assets:WaitForChild("DialogInfo"))
+local StoredValues = require(_Assets:WaitForChild("StoredValues"))
 
 
 ---------- Module ----------
@@ -19,13 +21,10 @@ Module.start = {
     sequenceId = "start",
     entry = {
         imageData = {
-            rightImage = {
-                imageId = "rbxthumb://type=Avatar&id=417781436&w=352&h=352",
-                size = UDim2.fromScale(0.3, 1),
-            },
+            rightImage = StoredValues.images.getPresetScaledUserThumbnailImageData(417781436, "Avatar"),
         },
         textData = {
-            speakerName = "Panicks28 - Game Creator",
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = (
                 "Hello.\n" ..
                 "Welcome to the game!"
@@ -50,6 +49,7 @@ Module.have_fun = {
     entry = {
         imageData = Module.start.entry.imageData,
         textData = {
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = "Have fun!",
         },
     },

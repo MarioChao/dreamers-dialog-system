@@ -5,7 +5,9 @@
 
 ---------- Imports ----------
 
-local DialogInfo = require(script.Parent:WaitForChild("_DialogInfo"))
+local _Assets = script.Parent:WaitForChild("_Assets")
+local DialogInfo = require(_Assets:WaitForChild("DialogInfo"))
+local StoredValues = require(_Assets:WaitForChild("StoredValues"))
 
 
 ---------- Module ----------
@@ -19,10 +21,7 @@ Module.start = {
     sequenceId = "start",
     entry = {
         imageData = {
-            rightImage = {
-                imageId = "rbxthumb://type=Avatar&id=417781436&w=352&h=352",
-                size = UDim2.fromScale(0.3, 1),
-            },
+            rightImage = StoredValues.images.getPresetScaledUserThumbnailImageData(417781436, "Avatar"),
         },
         textData = {
             speakerName = "???",
@@ -36,13 +35,10 @@ Module.default2 = {
     sequenceId = "default2",
     entry = {
         imageData = {
-            rightImage = {
-                imageId = "rbxthumb://type=AvatarBust&id=417781436&w=352&h=352",
-                size = UDim2.fromScale(0.3, 1),
-            },
+            rightImage = StoredValues.images.getPresetScaledUserThumbnailImageData(417781436, "AvatarBust"),
         },
         textData = {
-            speakerName = "Panicks28 - Game Creator",
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = "To start, vote for a puzzle by stepping on one of the plates with red outlines!",
         },
         optionsData = {
@@ -69,6 +65,7 @@ Module.option1 = {
     entry = {
         imageData = Module.default2.entry.imageData,
         textData = {
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = (
                 "In a new server, each game will start at the easiest difficulty.\n" ..
                 "You can learn more about the games by searching up the name of the games online!"
@@ -83,6 +80,7 @@ Module.repeated = {
     entry = {
         imageData = Module.default2.entry.imageData,
         textData = {
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = "Any more questions?",
         },
         optionsData = Module.default2.entry.optionsData,
@@ -98,6 +96,7 @@ Module.have_fun = {
     entry = {
         imageData = Module.start.entry.imageData,
         textData = {
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = "Have fun!",
         },
     },

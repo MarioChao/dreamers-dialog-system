@@ -76,6 +76,13 @@ onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[an
     local sequenceId_sequence = getOrCreatePlayerInfo_sequenceId_sequence(player)
     table.clear(sequenceId_sequence)
     for _, dialogSequence in dialogSequences do
+        -- Check data
+        assert(dialogSequence.entry.textData.speakerName,
+            `[Dialog System]: missing speaker name for dialog sequence {dialogSequence.sequenceId}.`)
+        assert(dialogSequence.entry.textData.dialogText,
+            `[Dialog System]: missing dialog text for dialog sequence {dialogSequence.sequenceId}.`)
+
+        -- Check & store sequence
         assert(dialogSequence.sequenceId, "[Dialog System]: Missing sequenceId.")
         if not (dialogSequence.nextSequenceId or dialogSequence.optionId_sequenceId) then
             warn(

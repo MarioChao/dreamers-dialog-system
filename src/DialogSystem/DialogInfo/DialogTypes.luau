@@ -7,10 +7,12 @@
 
 export type DialogGuiStyle = {
     backgroundColor: ColorSequence?,
+    backgroundTransparency: number?,
     borderStrokeColor: Color3?,
     textColor: Color3?,
     textFont: Font?,
     textStrokeColor: Color3?,
+    textStrokeTransparency: number?,
 }
 
 export type DialogIndividualImageData = {
@@ -31,8 +33,8 @@ export type TypewriterData = {
 }
 
 export type DialogTextData = {
+    speakerName: string,
     dialogText: string,
-    speakerName: string?,
     typewriterData: TypewriterData?,
 }
 

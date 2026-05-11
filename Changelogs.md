@@ -1,6 +1,21 @@
 # Changelogs
 
-## [v0.0.10] Removed bindables + Clear entry race condition | 2026/05/10
+## [v0.0.11] Reorganized storage + Stored values | 2026/05/10 (2)
+
+Moved utility instances for `DialogStorage` to be under the `_Assets` folder.
+- Renamed `_DialogInfo` to `DialogInfo`.
+- Added new `StoredValues` module for storing and creating common values used in dialog sequences.
+    - Includes `GuiStyles` (dialog gui style), `Images` (image data), and `Speakers` (speaker names).
+    - Also includes `Custom` for other kinds of values.
+
+Added more fields for dialog gui styles:
+- New fields `backgroundTransparency` and `textStrokeTransparency`.
+    - These fields aren't implemented yet; it will require updating `UIUtil`.
+
+Made `speakerName` a required field for dialog entries.
+- This is because speaker orders might be messed up with complex dialog branches.
+
+## [v0.0.10] Removed bindables + Clear entry race condition | 2026/05/10 (1)
 
 Removed uses of bindable events and bindable functions by migrating `MainServer` to a module.
 

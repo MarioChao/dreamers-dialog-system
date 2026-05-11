@@ -5,7 +5,9 @@
 
 ---------- Imports ----------
 
-local DialogInfo = require(script.Parent:WaitForChild("_DialogInfo"))
+local _Assets = script.Parent:WaitForChild("_Assets")
+local DialogInfo = require(_Assets:WaitForChild("DialogInfo"))
+local StoredValues = require(_Assets:WaitForChild("StoredValues"))
 
 
 ---------- Module ----------
@@ -19,13 +21,10 @@ Module.start = {
     sequenceId = "start",
     entry = {
         imageData = {
-            rightImage = {
-                imageId = "rbxthumb://type=Avatar&id=417781436&w=352&h=352",
-                size = UDim2.fromScale(0.3, 1),
-            },
+            rightImage = StoredValues.images.getPresetScaledUserThumbnailImageData(417781436, "Avatar"),
         },
         textData = {
-            speakerName = "Panicks28 - Game Creator",
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = (
                 "Hello. 👋!\n" ..
                 "Welcome to the game!"
@@ -38,19 +37,12 @@ Module.start = {
 Module.dreamer_dialog = {
     sequenceId = "dreamer_dialog",
     entry = {
-        dialogGuiStyle = {
-            backgroundColor = ColorSequence.new(Color3.new(.75, 0, 0)),
-            textColor = Color3.new(0, .75, 0),
-            textStrokeColor = Color3.new(0, .25, 0),
-            textFont = Font.fromEnum(Enum.Font.Merriweather),
-        },
+        dialogGuiStyle = StoredValues.guiStyles.christmas_like,
         imageData = {
-            rightImage = {
-                imageId = "rbxthumb://type=AvatarBust&id=417781436&w=352&h=352",
-                size = UDim2.fromScale(0.3, 1),
-            },
+            rightImage = StoredValues.images.getPresetScaledUserThumbnailImageData(417781436, "AvatarBust"),
         },
         textData = {
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = "This is dreamer's dialog system!",
             typewriterData = {
                 charSpeed = 36,
@@ -83,6 +75,7 @@ Module.have_fun = {
     entry = {
         imageData = Module.start.entry.imageData,
         textData = {
+            speakerName = StoredValues.speakers.gameCreator,
             dialogText = "Have fun!",
         },
     },

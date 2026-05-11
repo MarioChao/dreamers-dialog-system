@@ -103,10 +103,12 @@ do
             ColorSequenceKeypoint.new(0, Color3.fromHex("#ffffff")),
             ColorSequenceKeypoint.new(1, Color3.fromHex("#e9eaec"))
         }),
+        backgroundTransparency = 0.6,
         borderStrokeColor = Color3.new(0, 0, 0),
         textColor = Color3.new(0, 0, 0),
         textFont = Font.fromEnum(Enum.Font.Ubuntu),
         textStrokeColor = Color3.new(1, 1, 1),
+        textStrokeTransparency = 0.5,
     }
 
     Constants.dialogUIs = screenUIs
@@ -312,6 +314,9 @@ end
 applyDialogGuiStyle = function(guiStyle: DialogInfo.DialogGuiStyle)
     for _, uiGradient in Constants.dialogUIs.backgroundUIGradients do
         uiGradient.Color = guiStyle.backgroundColor or Constants.dialogUIs.defaultGuiStyles.backgroundColor
+        -- uiGradient.Transparency = NumberSequence.new(
+        --     guiStyle.backgroundTransparency or Constants.dialogUIs.defaultGuiStyles.backgroundTransparency
+        -- )
     end
 
     for _, uiStroke in Constants.dialogUIs.containerUIStrokes do
@@ -320,6 +325,10 @@ applyDialogGuiStyle = function(guiStyle: DialogInfo.DialogGuiStyle)
 
     for _, uiStroke in Constants.dialogUIs.textUIStrokes do
         uiStroke.Color = guiStyle.textStrokeColor or Constants.dialogUIs.defaultGuiStyles.textStrokeColor
+        -- uiStroke.Transparency = (
+        --     guiStyle.textStrokeTransparency or
+        --     Constants.dialogUIs.defaultGuiStyles.textStrokeTransparency
+        -- )
     end
 
     for _, textLabel in Constants.dialogUIs.textLabels do
