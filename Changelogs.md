@@ -1,5 +1,16 @@
 # Changelogs
 
+## [v0.0.12] Dialog source template | 2026/05/12
+
+Added a template for making dialog source, `TemplateDialogSource`, under `DialogMain`.
+- Handled by the `DialogSourceSetUp` module script under `DialogMain`.
+- Uses [ContainerEvent](https://github.com/MarioChao/container-event) for detecting player interactions.
+- The collection service structure is similar to that used in `ContainerEvent`.
+
+> [!IMPORTANT]
+> The `ContainerEvent` module is imported through the `dev-dependencies` feature of [wally](https://wally.run/).
+> In actual projects, you might want to modify the import statements in `DialogMain` > `DialogSourceSetUp`.
+
 ## [v0.0.11] Reorganized storage + Stored values | 2026/05/10 (2)
 
 Moved utility instances for `DialogStorage` to be under the `_Assets` folder.

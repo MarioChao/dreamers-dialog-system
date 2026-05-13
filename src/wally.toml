@@ -15,3 +15,6 @@ exclude = ["TestPlace"]
 BelovedRemote = "mariochao/beloved-remote@0.0.2"
 TextTypewriter = "mariochao/text-typewriter@0.0.1"
 UIUtil = "mariochao/ui-util@0.0.1"
+
+[dev-dependencies]
+ContainerEvent = "mariochao/container-event@0.0.0"

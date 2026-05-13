@@ -4,6 +4,9 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
+      "DevModules": {
+        "$path": "src/DevPackages"
+      },
       "Modules": {
         "$path": "src/Packages",
         "$ignoreUnknownInstances": true,

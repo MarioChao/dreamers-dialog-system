@@ -11,6 +11,7 @@ local Players = game:GetService("Players")
 ---------- Imports ----------
 
 local DialogActions = require(script:WaitForChild("DialogActions"))
+local DialogSourceSetUp = require(script:WaitForChild("DialogSourceSetUp"))
 
 
 ---------- Constants ----------
@@ -26,6 +27,7 @@ table.freeze(Constants)
 ---------- Local functions ----------
 
 local onPlayerAdded
+local setUpPlayerAdded
 
 
 ----- Player added -----
@@ -34,10 +36,7 @@ onPlayerAdded = function(player: Player)
     DialogActions.setPlayerStoredDialog(player, Constants.initialSequencesModule, Constants.initialSequenceId, true)
 end
 
-
------ Main -----
-
-local function main()
+setUpPlayerAdded = function()
     local initialPlayers = Players:GetPlayers()
     task.defer(function()
         for _, player in initialPlayers do
@@ -45,6 +44,14 @@ local function main()
         end
     end)
     Players.PlayerAdded:Connect(onPlayerAdded)
+end
+
+
+----- Main -----
+
+local function main()
+    setUpPlayerAdded()
+    DialogSourceSetUp.setUpTaggedObjects()
 end
 
 
