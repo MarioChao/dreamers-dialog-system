@@ -1,5 +1,18 @@
 # Changelogs
 
+## [v0.0.13] Container mechanic migration | 2026/05/14
+
+Migrated `CollectionService` operations in `DialogSourceSetUp` to [ContainerMechanic](https://github.com/MarioChao/container-mechanic).
+- Made the configs function-based, allowing instantaneous access of "sequences module" and "start sequence id".
+
+Updated [ContainerEvent](https://github.com/MarioChao/container-event) to v0.0.1, which uses `ContainerMechanic` as well.
+
+Renamed `eventTable` to `eventSignals` in the test script `DialogSourceSetUp`.
+
+Added a warning message in `DialogActions` if a sequences module isn't found in `DialogStorage`.
+
+Slightly modified debug messages to include single quotes around instance names.
+
 ## [v0.0.12] Dialog source template | 2026/05/12
 
 Added a template for making dialog source, `TemplateDialogSource`, under `DialogMain`.

@@ -40,6 +40,8 @@ setPlayerStoredDialog = function(player: Player, sequencesName: string, startId:
     if _Sequences then
         local Sequences = require(_Sequences) :: {DialogSystem.DialogSequence}
         setPlayerDialog(player, Sequences, startId)
+    else
+        warn(`[Dialog Actions]: No dialog sequences module found with name '{sequencesName}'.`)
     end
 end
 

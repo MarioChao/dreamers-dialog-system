@@ -9,13 +9,18 @@ dependencies = []
 
 [[package]]
 name = "mariochao/container-event"
+version = "0.0.1"
+dependencies = [["ContainerMechanic", "mariochao/container-mechanic@0.0.0"]]
+
+[[package]]
+name = "mariochao/container-mechanic"
 version = "0.0.0"
 dependencies = []
 
 [[package]]
 name = "mariochao/dreamers-dialog-system"
 version = "0.0.0"
-dependencies = [["BelovedRemote", "mariochao/beloved-remote@0.0.2"], ["TextTypewriter", "mariochao/text-typewriter@0.0.1"], ["UIUtil", "mariochao/ui-util@0.0.1"], ["ContainerEvent", "mariochao/container-event@0.0.0"]]
+dependencies = [["BelovedRemote", "mariochao/beloved-remote@0.0.2"], ["TextTypewriter", "mariochao/text-typewriter@0.0.1"], ["UIUtil", "mariochao/ui-util@0.0.1"], ["ContainerEvent", "mariochao/container-event@0.0.1"], ["ContainerMechanic", "mariochao/container-mechanic@0.0.0"]]
 
 [[package]]
 name = "mariochao/text-typewriter"

@@ -5,7 +5,6 @@
 
 ---------- Services ----------
 
-local CollectionService = game:GetService("CollectionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 
@@ -15,13 +14,14 @@ local DialogActions = require(script.Parent:WaitForChild("DialogActions"))
 
 local _Modules = ReplicatedStorage:WaitForChild("DevModules")
 local ContainerEvent = require(_Modules:WaitForChild("ContainerEvent"))
+local ContainerMechanic = require(_Modules:WaitForChild("ContainerMechanic"))
 
 
 ---------- Types ----------
 
 type DialogSourceConfig = {
-    sequencesModule: string,
-    startSequenceId: string,
+    getSequencesModule: () -> string,
+    getStartSequenceId: () -> string,
 }
 
 
@@ -48,11 +48,10 @@ Globals.container_playerInteractedConnection = {} :: {[Instance]: RBXScriptConne
 
 local getAttributeAssertType
 
-local getConfigFromConfigInstance
-local setUpDialogEvent
-local onObjectTagged
+local getConfigFromInstance
 
-local onObjectRemoved
+local setUpContainer
+
 local cleanUpContainer
 
 local setUpTaggedObjects
@@ -73,81 +72,43 @@ getAttributeAssertType = function(object: Instance, attributeName: string, expec
 end
 
 
------ Tagged objects -----
+----- Get config -----
 
-getConfigFromConfigInstance = function(configInstance: Instance): DialogSourceConfig
+getConfigFromInstance = function(configInstance: Instance): DialogSourceConfig
     local result = {
-        sequencesModule = tostring(getAttributeAssertType(configInstance, "SequencesModule", "string")) or "",
-        startSequenceId = tostring(getAttributeAssertType(configInstance, "StartSequenceId", "string")) or "",
+        getSequencesModule = function()
+            return tostring(getAttributeAssertType(configInstance, "SequencesModule", "string")) or ""
+        end,
+        getStartSequenceId = function()
+            return tostring(getAttributeAssertType(configInstance, "StartSequenceId", "string")) or ""
+        end,
     }
     return result
 end
 
-setUpDialogEvent = function(config: DialogSourceConfig, configContainer: Instance)
-    local eventTable = ContainerEvent.getEventSignalTableFromContainer(configContainer, 5)
-    if eventTable then
-        if Globals.container_playerInteractedConnection[configContainer] then
-            Globals.container_playerInteractedConnection[configContainer]:Disconnect()
+
+----- Set up -----
+
+setUpContainer = function(container: Instance, config: DialogSourceConfig)
+    local eventSignals = ContainerEvent.getEventSignalTableFromContainer(container, 5)
+    if eventSignals then
+        if Globals.container_playerInteractedConnection[container] then
+            Globals.container_playerInteractedConnection[container]:Disconnect()
         end
-        Globals.container_playerInteractedConnection[configContainer] = (
-            eventTable.playerInteracted:Connect(function(player: Player)
-                DialogActions.setPlayerStoredDialog(player, config.sequencesModule, config.startSequenceId, false)
+        Globals.container_playerInteractedConnection[container] = (
+            eventSignals.playerInteracted:Connect(function(player: Player)
+                local sequencesModule = config.getSequencesModule()
+                local startSequenceId = config.getStartSequenceId()
+                DialogActions.setPlayerStoredDialog(player, sequencesModule, startSequenceId, false)
             end)
         )
     else
-        warn(`[Dialog Main]: Signal table not found!`)
+        warn(`[Dialog Main]: Event signal table not found!`)
     end
 end
 
-onObjectTagged = function(object: Instance)
-    -- Validate parent container
-    local configContainer = object.Parent
-    if not configContainer then
-        warn(`[Dialog Main]: Unable to find parent container for config instance '{object}'.`)
-        return
-    end
 
-    -- Clean up existing container
-    if Globals.configInstance_container[object] then
-        cleanUpContainer(Globals.configInstance_container[object])
-    end
-    Globals.configInstance_container[object] = configContainer
-
-    -- Get config
-    local config = getConfigFromConfigInstance(object)
-
-    -- Dialog event
-    task.defer(setUpDialogEvent, config, configContainer)
-
-    -- Parent changed
-    if Globals.configInstance_parentChangedConnection[object] then
-        Globals.configInstance_parentChangedConnection[object]:Disconnect()
-    end
-    Globals.configInstance_parentChangedConnection[object] = (
-        object:GetPropertyChangedSignal("Parent"):Connect(function()
-            cleanUpContainer(configContainer)
-            configContainer = object.Parent
-            if configContainer then
-                setUpDialogEvent(config, configContainer)
-            end
-        end)
-    )
-end
-
-
------ Removed objects -----
-
-onObjectRemoved = function(object: Instance)
-    local configContainer = Globals.configInstance_container[object]
-    if configContainer then
-        cleanUpContainer(configContainer)
-    end
-    Globals.configInstance_container[object] = nil
-    if Globals.configInstance_parentChangedConnection[object] then
-        Globals.configInstance_parentChangedConnection[object]:Disconnect()
-    end
-    Globals.configInstance_parentChangedConnection[object] = nil
-end
+----- Clean up -----
 
 cleanUpContainer = function(container: Instance)
     -- Disconnect player interaction
@@ -161,14 +122,11 @@ end
 ----- Tagged -----
 
 setUpTaggedObjects = function()
-    local initialTagged = CollectionService:GetTagged(Constants.dialogSourceConfigTagName)
-    task.defer(function()
-        for _, object in initialTagged do
-            task.defer(onObjectTagged, object)
-        end
-    end)
-    CollectionService:GetInstanceAddedSignal(Constants.dialogSourceConfigTagName):Connect(onObjectTagged)
-    CollectionService:GetInstanceRemovedSignal(Constants.dialogSourceConfigTagName):Connect(onObjectRemoved)
+    local mechanic = ContainerMechanic.new(Constants.dialogSourceConfigTagName)
+    mechanic:setFunction_getConfigFromInstance(getConfigFromInstance)
+    mechanic:setFunction_setUpContainer(setUpContainer)
+    mechanic:setFunction_cleanUpContainer(cleanUpContainer)
+    mechanic:run()
 end
 
 

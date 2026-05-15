@@ -78,16 +78,16 @@ onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[an
     for _, dialogSequence in dialogSequences do
         -- Check data
         assert(dialogSequence.entry.textData.speakerName,
-            `[Dialog System]: missing speaker name for dialog sequence {dialogSequence.sequenceId}.`)
+            `[Dialog System]: missing speaker name for dialog sequence '{dialogSequence.sequenceId}'.`)
         assert(dialogSequence.entry.textData.dialogText,
-            `[Dialog System]: missing dialog text for dialog sequence {dialogSequence.sequenceId}.`)
+            `[Dialog System]: missing dialog text for dialog sequence '{dialogSequence.sequenceId}'.`)
 
         -- Check & store sequence
         assert(dialogSequence.sequenceId, "[Dialog System]: Missing sequenceId.")
         if not (dialogSequence.nextSequenceId or dialogSequence.optionId_sequenceId) then
             warn(
                 `[Dialog System]: Missing next sequence id or option sequence ids for ` ..
-                `dialog sequence {dialogSequence.sequenceId}.`
+                `dialog sequence '{dialogSequence.sequenceId}'.`
             )
         end
         sequenceId_sequence[dialogSequence.sequenceId] = dialogSequence
@@ -116,7 +116,7 @@ onSetDialogSequenceIdForPlayer = function(player: Player, dialogSequenceId: stri
     end
 
     local dialogSequence = getPlayerDialogSequence(player, dialogSequenceId)
-    assert(dialogSequence, `[Dialog System]: No dialog sequence with id {dialogSequenceId} found for {player.Name}!`)
+    assert(dialogSequence, `[Dialog System]: No dialog sequence with id '{dialogSequenceId}' found for player '{player.Name}'!`)
 
     Globals.player_dialogSequence[player] = dialogSequence
     showDialogEntryForPlayer(player, dialogSequence.entry)
@@ -134,15 +134,15 @@ end
 
 onPlayerChooseOption = function(player: Player, optionId: string)
     local dialogSequence = Globals.player_dialogSequence[player]
-    assert(dialogSequence ~= nil, `[Dialog System]: No dialog sequence found for player {player.Name}!`)
+    assert(dialogSequence ~= nil, `[Dialog System]: No dialog sequence found for player '{player.Name}'!`)
 
     local callback = dialogSequence.optionId_callback and dialogSequence.optionId_callback[optionId]
     if callback and typeof(callback) == "function" then
         local success = pcall(callback)
         if not success then
             warn(
-                `[Dialog System]: Callback errored for option {optionId} of dialog {dialogSequence.sequenceId} ` ..
-                `for {player.Name}!`
+                `[Dialog System]: Callback errored for option '{optionId}' of dialog '{dialogSequence.sequenceId}' ` ..
+                `for player '{player.Name}'!`
             )
         end
     end
@@ -155,15 +155,15 @@ end
 
 onPlayerNextDialog = function(player: Player)
     local dialogSequence = Globals.player_dialogSequence[player]
-    assert(dialogSequence ~= nil, `[Dialog System]: No dialog sequence found for player {player.Name}!`)
+    assert(dialogSequence ~= nil, `[Dialog System]: No dialog sequence found for player '{player.Name}'!`)
 
     local callback = dialogSequence.nextSequenceCallback
     if callback and typeof(callback) == "function" then
         local success = pcall(callback)
         if not success then
             warn(
-                `[Dialog System]: Callback errored for next sequence of dialog {dialogSequence.sequenceId} ` ..
-                `for {player.Name}!`
+                `[Dialog System]: Callback errored for next sequence of dialog '{dialogSequence.sequenceId}' ` ..
+                `for '{player.Name}'!`
             )
         end
     end
