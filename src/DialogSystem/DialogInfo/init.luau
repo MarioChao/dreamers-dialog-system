@@ -19,7 +19,7 @@ export type DialogTextData = DialogTypes.DialogTextData
 export type DialogSingleOptionData = DialogTypes.DialogSingleOptionData
 export type DialogOptionsData = DialogTypes.DialogOptionsData
 export type DialogEntry = DialogTypes.DialogEntry
-export type DialogSequence = DialogTypes.DialogSequence
+export type DialogNode = DialogTypes.DialogNode
 
 
 ---------- Module ----------

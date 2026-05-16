@@ -55,12 +55,12 @@ export type DialogEntry = {
     optionsData: DialogOptionsData?,
 }
 
-export type DialogSequence = {
-    sequenceId: string,
+export type DialogNode = {
+    nodeId: string,
     entry: DialogEntry,
-    nextSequenceId: string,
-    nextSequenceCallback: (() -> ())?,
-    optionId_sequenceId: {[string]: string}?,
+    nextNodeId: string,
+    nextNodeCallback: (() -> ())?,
+    optionId_nodeId: {[string]: string}?,
     optionId_callback: {[string]: () -> ()}?,
 }
 

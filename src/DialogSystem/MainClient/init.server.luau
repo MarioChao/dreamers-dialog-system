@@ -148,7 +148,7 @@ local connectButtonEvents
 
 local setIsEntryButtonClicked
 
-local onQueryNextSequence
+local onQueryNextNode
 local cancelThreads
 local onClearDialogEntryProxy
 local onClearDialogEntry
@@ -197,7 +197,7 @@ end
 
 ----- Dialog -----
 
-onQueryNextSequence = function()
+onQueryNextNode = function()
     Globals.isPreviousFadeInProgress = true
     task.defer(function()
         applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, false, {useFade = true, willWait = false})
@@ -265,7 +265,7 @@ onShowDialogEntry = function(dialogEntry: DialogInfo.DialogEntry)
 
     -- Check options
     if dialogEntry.optionsData == nil or next(dialogEntry.optionsData.options or {}) == nil then
-        --[[ Proceed to next sequence if no option ]]
+        --[[ Proceed to next node if no option ]]
 
         -- Wait for player click
         applyUIFade(Constants.dialogUIs.nextIndicator_textLabel, true, {useFade = true, willWait = false})
@@ -274,8 +274,8 @@ onShowDialogEntry = function(dialogEntry: DialogInfo.DialogEntry)
             task.wait()
         end
 
-        -- Query next sequence
-        onQueryNextSequence()
+        -- Query next node
+        onQueryNextNode()
         BelovedRemote.fire_toServer(DialogEvents.remoteActions.toServer.nextDialog)
     else
         -- Apply options
@@ -453,7 +453,7 @@ applyDialogOptionsData = function(optionsData: DialogInfo.DialogOptionsData)
             if Globals.isPreviousFadeInProgress then
                 return
             end
-            onQueryNextSequence()
+            onQueryNextNode()
             BelovedRemote.fire_toServer(DialogEvents.remoteActions.toServer.chooseOption, option.id)
         end)
 

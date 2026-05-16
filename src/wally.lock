@@ -9,7 +9,7 @@ dependencies = []
 
 [[package]]
 name = "mariochao/dreamers-dialog-system"
-version = "0.0.15"
+version = "0.0.16"
 dependencies = [["BelovedRemote", "mariochao/beloved-remote@0.0.2"], ["TextTypewriter", "mariochao/text-typewriter@0.0.1"], ["UIUtil", "mariochao/ui-util@0.0.1"]]
 
 [[package]]

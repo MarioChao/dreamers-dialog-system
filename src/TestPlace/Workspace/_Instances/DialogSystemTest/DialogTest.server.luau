@@ -34,8 +34,8 @@ local onPromptTriggered
 
 onPromptTriggered = function(player: Player)
     if not DialogSystem.getIsPlayerInDialog(player) then
-        DialogSystem.storeDialogSequencesForPlayer(player, Constants.dialog)
-        DialogSystem.setDialogSequenceIdForPlayer(player, Constants.dialog.start.sequenceId)
+        DialogSystem.storeDialogNodesForPlayer(player, Constants.dialog)
+        DialogSystem.setDialogNodeIdForPlayer(player, Constants.dialog.start.nodeId)
     end
 end
 

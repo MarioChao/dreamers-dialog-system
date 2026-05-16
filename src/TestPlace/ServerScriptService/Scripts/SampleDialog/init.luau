@@ -17,7 +17,7 @@ local Module = {}
 ----- Module fields -----
 
 Module.start = {
-    sequenceId = "start",
+    nodeId = "start",
     entry = {
         imageData = {
             rightImage = StoredValues.images.getPresetScaledUserThumbnailImageData(417781436, "Avatar"),
@@ -30,11 +30,11 @@ Module.start = {
             ),
         },
     },
-    nextSequenceId = "dreamer_dialog",
-} :: DialogInfo.DialogSequence
+    nextNodeId = "dreamer_dialog",
+} :: DialogInfo.DialogNode
 
 Module.dreamer_dialog = {
-    sequenceId = "dreamer_dialog",
+    nodeId = "dreamer_dialog",
     entry = {
         dialogGuiStyle = StoredValues.guiStyles.christmas_like,
         imageData = {
@@ -64,14 +64,14 @@ Module.dreamer_dialog = {
             },
         },
     },
-    optionId_sequenceId = {
+    optionId_nodeId = {
         rewind = "start",
         i_got_it = "have_fun",
     },
-} :: DialogInfo.DialogSequence
+} :: DialogInfo.DialogNode
 
 Module.have_fun = {
-    sequenceId = "have_fun",
+    nodeId = "have_fun",
     entry = {
         imageData = Module.start.entry.imageData,
         textData = {
@@ -79,8 +79,8 @@ Module.have_fun = {
             dialogText = "Have fun!",
         },
     },
-    nextSequenceId = DialogInfo.constants.CLOSE_SEQUENCE_ID,
-} :: DialogInfo.DialogSequence
+    nextNodeId = DialogInfo.constants.CLOSE_NODE_ID,
+} :: DialogInfo.DialogNode
 
 
 ---------- Return module ----------

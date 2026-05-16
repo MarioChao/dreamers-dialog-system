@@ -23,8 +23,8 @@ local BelovedRemote = require(_Modules:WaitForChild("BelovedRemote"))
 
 local Globals = {}
 
-Globals.player_dialogSequence = {} :: {[Player]: DialogInfo.DialogSequence?}
-Globals.player_sequenceId_sequence = {} :: {[Player]: {[string]: DialogInfo.DialogSequence?}?}
+Globals.player_dialogNode = {} :: {[Player]: DialogInfo.DialogNode?}
+Globals.player_nodeId_node = {} :: {[Player]: {[string]: DialogInfo.DialogNode?}?}
 Globals.player_isInDialog = {} :: {[Player]: true?}
 
 
@@ -32,11 +32,11 @@ Globals.player_isInDialog = {} :: {[Player]: true?}
 
 local connectDialogEvents
 
-local getOrCreatePlayerInfo_sequenceId_sequence
+local getOrCreatePlayerInfo_nodeId_node
 
-local onStoreDialogSequencesForPlayer
-local onSetDialogSequenceIdForPlayer
-local getPlayerDialogSequence
+local onStoreDialogNodesForPlayer
+local onSetDialogNodeIdForPlayer
+local getPlayerDialogNode
 local showDialogEntryForPlayer
 local clearDialogForPlayer
 local onPlayerChooseOption
@@ -56,14 +56,14 @@ end
 
 ----- Player info -----
 
-getOrCreatePlayerInfo_sequenceId_sequence = function(player: Player)
-    local value = Globals.player_sequenceId_sequence[player]
+getOrCreatePlayerInfo_nodeId_node = function(player: Player)
+    local value = Globals.player_nodeId_node[player]
     local result
     if value then
         result = value
     else
         result = {}
-        Globals.player_sequenceId_sequence[player] = result
+        Globals.player_nodeId_node[player] = result
     end
     return result
 end
@@ -71,55 +71,55 @@ end
 
 ----- Dialog -----
 
-onStoreDialogSequencesForPlayer = function(player: Player, dialogSequences: {[any]: DialogInfo.DialogSequence})
+onStoreDialogNodesForPlayer = function(player: Player, dialogNodes: {[any]: DialogInfo.DialogNode})
     assert(player and player:IsA("Player"), "[Dialog System]: invalid player.")
-    local sequenceId_sequence = getOrCreatePlayerInfo_sequenceId_sequence(player)
-    table.clear(sequenceId_sequence)
-    for _, dialogSequence in dialogSequences do
+    local nodeId_node = getOrCreatePlayerInfo_nodeId_node(player)
+    table.clear(nodeId_node)
+    for _, dialogNode in dialogNodes do
         -- Check data
-        assert(dialogSequence.entry.textData.speakerName,
-            `[Dialog System]: missing speaker name for dialog sequence '{dialogSequence.sequenceId}'.`)
-        assert(dialogSequence.entry.textData.dialogText,
-            `[Dialog System]: missing dialog text for dialog sequence '{dialogSequence.sequenceId}'.`)
+        assert(dialogNode.entry.textData.speakerName,
+            `[Dialog System]: missing speaker name for dialog node '{dialogNode.nodeId}'.`)
+        assert(dialogNode.entry.textData.dialogText,
+            `[Dialog System]: missing dialog text for dialog node '{dialogNode.nodeId}'.`)
 
-        -- Check & store sequence
-        assert(dialogSequence.sequenceId, "[Dialog System]: Missing sequenceId.")
-        if not (dialogSequence.nextSequenceId or dialogSequence.optionId_sequenceId) then
+        -- Check & store node
+        assert(dialogNode.nodeId, "[Dialog System]: Missing nodeId.")
+        if not (dialogNode.nextNodeId or dialogNode.optionId_nodeId) then
             warn(
-                `[Dialog System]: Missing next sequence id or option sequence ids for ` ..
-                `dialog sequence '{dialogSequence.sequenceId}'.`
+                `[Dialog System]: Missing next node id or option node ids for ` ..
+                `dialog node '{dialogNode.nodeId}'.`
             )
         end
-        sequenceId_sequence[dialogSequence.sequenceId] = dialogSequence
+        nodeId_node[dialogNode.nodeId] = dialogNode
     end
 end
 
-getPlayerDialogSequence = function(player: Player, sequenceId: string)
-    local result: DialogInfo.DialogSequence?
-    if sequenceId == nil then
+getPlayerDialogNode = function(player: Player, nodeId: string)
+    local result: DialogInfo.DialogNode?
+    if nodeId == nil then
         result = nil
-    elseif typeof(sequenceId) == "string" then
-        if Globals.player_sequenceId_sequence[player] then
-            local sequenceId_sequence = getOrCreatePlayerInfo_sequenceId_sequence(player)
-            result = sequenceId_sequence[sequenceId]
+    elseif typeof(nodeId) == "string" then
+        if Globals.player_nodeId_node[player] then
+            local nodeId_node = getOrCreatePlayerInfo_nodeId_node(player)
+            result = nodeId_node[nodeId]
         end
     end
     return result
 end
 
-onSetDialogSequenceIdForPlayer = function(player: Player, dialogSequenceId: string, notNew: boolean?)
+onSetDialogNodeIdForPlayer = function(player: Player, dialogNodeId: string, notNew: boolean?)
     assert(player and player:IsA("Player"), "[Dialog System]: invalid player.")
 
-    if dialogSequenceId == DialogInfo.constants.CLOSE_SEQUENCE_ID then
+    if dialogNodeId == DialogInfo.constants.CLOSE_NODE_ID then
         clearDialogForPlayer(player)
         return
     end
 
-    local dialogSequence = getPlayerDialogSequence(player, dialogSequenceId)
-    assert(dialogSequence, `[Dialog System]: No dialog sequence with id '{dialogSequenceId}' found for player '{player.Name}'!`)
+    local dialogNode = getPlayerDialogNode(player, dialogNodeId)
+    assert(dialogNode, `[Dialog System]: No dialog node with id '{dialogNodeId}' found for player '{player.Name}'!`)
 
-    Globals.player_dialogSequence[player] = dialogSequence
-    showDialogEntryForPlayer(player, dialogSequence.entry)
+    Globals.player_dialogNode[player] = dialogNode
+    showDialogEntryForPlayer(player, dialogNode.entry)
 end
 
 showDialogEntryForPlayer = function(player: Player, dialogEntry: DialogInfo.DialogEntry)
@@ -133,43 +133,43 @@ clearDialogForPlayer = function(player: Player)
 end
 
 onPlayerChooseOption = function(player: Player, optionId: string)
-    local dialogSequence = Globals.player_dialogSequence[player]
-    assert(dialogSequence ~= nil, `[Dialog System]: No dialog sequence found for player '{player.Name}'!`)
+    local dialogNode = Globals.player_dialogNode[player]
+    assert(dialogNode ~= nil, `[Dialog System]: No dialog node found for player '{player.Name}'!`)
 
-    local callback = dialogSequence.optionId_callback and dialogSequence.optionId_callback[optionId]
+    local callback = dialogNode.optionId_callback and dialogNode.optionId_callback[optionId]
     if callback and typeof(callback) == "function" then
         local success = pcall(callback)
         if not success then
             warn(
-                `[Dialog System]: Callback errored for option '{optionId}' of dialog '{dialogSequence.sequenceId}' ` ..
+                `[Dialog System]: Callback errored for option '{optionId}' of dialog '{dialogNode.nodeId}' ` ..
                 `for player '{player.Name}'!`
             )
         end
     end
 
-    local nextSequenceId = dialogSequence.optionId_sequenceId and dialogSequence.optionId_sequenceId[optionId]
-    if nextSequenceId then
-        onSetDialogSequenceIdForPlayer(player, nextSequenceId)
+    local nextNodeId = dialogNode.optionId_nodeId and dialogNode.optionId_nodeId[optionId]
+    if nextNodeId then
+        onSetDialogNodeIdForPlayer(player, nextNodeId)
     end
 end
 
 onPlayerNextDialog = function(player: Player)
-    local dialogSequence = Globals.player_dialogSequence[player]
-    assert(dialogSequence ~= nil, `[Dialog System]: No dialog sequence found for player '{player.Name}'!`)
+    local dialogNode = Globals.player_dialogNode[player]
+    assert(dialogNode ~= nil, `[Dialog System]: No dialog node found for player '{player.Name}'!`)
 
-    local callback = dialogSequence.nextSequenceCallback
+    local callback = dialogNode.nextNodeCallback
     if callback and typeof(callback) == "function" then
         local success = pcall(callback)
         if not success then
             warn(
-                `[Dialog System]: Callback errored for next sequence of dialog '{dialogSequence.sequenceId}' ` ..
+                `[Dialog System]: Callback errored for next node of dialog '{dialogNode.nodeId}' ` ..
                 `for '{player.Name}'!`
             )
         end
     end
 
-    local nextSequenceId = dialogSequence.nextSequenceId or DialogInfo.constants.CLOSE_SEQUENCE_ID
-    onSetDialogSequenceIdForPlayer(player, nextSequenceId)
+    local nextNodeId = dialogNode.nextNodeId or DialogInfo.constants.CLOSE_NODE_ID
+    onSetDialogNodeIdForPlayer(player, nextNodeId)
 end
 
 
@@ -186,8 +186,8 @@ local function main()
     if RunService:IsServer() then
         connectDialogEvents()
         Players.PlayerRemoving:Connect(function(player: Player)
-            Globals.player_dialogSequence[player] = nil
-            Globals.player_sequenceId_sequence[player] = nil
+            Globals.player_dialogNode[player] = nil
+            Globals.player_nodeId_node[player] = nil
             Globals.player_isInDialog[player] = nil
         end)
     else
@@ -208,9 +208,9 @@ local Module = {}
 
 ----- Module fields -----
 
-Module.storeDialogSequencesForPlayer = onStoreDialogSequencesForPlayer
+Module.storeDialogNodesForPlayer = onStoreDialogNodesForPlayer
 
-Module.setDialogSequenceIdForPlayer = onSetDialogSequenceIdForPlayer
+Module.setDialogNodeIdForPlayer = onSetDialogNodeIdForPlayer
 
 Module.getIsPlayerInDialog = getIsPlayerInDialog
 

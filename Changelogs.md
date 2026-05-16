@@ -1,5 +1,10 @@
 # Changelogs
 
+## [v0.0.16] Clarified terminology | 2026/05/16 (3)
+
+Renamed all use of the term "sequence" to "node".
+- Clarifies the meaning.
+
 ## [v0.0.15] Replicated sound effects | 2026/05/16 (2)
 
 Modified `MainClient` to handle empty `charSounds`.

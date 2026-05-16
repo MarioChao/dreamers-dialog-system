@@ -25,7 +25,7 @@ local MainServer = require(script:WaitForChild("MainServer"))
 
 export type DialogGuiStyle = DialogInfo.DialogGuiStyle
 export type DialogEntry = DialogInfo.DialogEntry
-export type DialogSequence = DialogInfo.DialogSequence
+export type DialogNode = DialogInfo.DialogNode
 
 
 ---------- Module ----------
@@ -35,12 +35,12 @@ local Module = {}
 
 ----- Module functions -----
 
-function Module.storeDialogSequencesForPlayer(player: Player, dialogSequences: {[any]: DialogInfo.DialogSequence})
-    MainServer.storeDialogSequencesForPlayer(player, dialogSequences)
+function Module.storeDialogNodesForPlayer(player: Player, dialogNodes: {[any]: DialogInfo.DialogNode})
+    MainServer.storeDialogNodesForPlayer(player, dialogNodes)
 end
 
-function Module.setDialogSequenceIdForPlayer(player: Player, dialogSequenceId: string)
-    MainServer.setDialogSequenceIdForPlayer(player, dialogSequenceId)
+function Module.setDialogNodeIdForPlayer(player: Player, dialogNodeId: string)
+    MainServer.setDialogNodeIdForPlayer(player, dialogNodeId)
 end
 
 function Module.getIsPlayerInDialog(player: Player)

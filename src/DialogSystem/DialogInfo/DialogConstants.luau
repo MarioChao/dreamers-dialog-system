@@ -6,7 +6,7 @@
 ---------- Module ----------
 
 local Module = {
-    CLOSE_SEQUENCE_ID = "CLOSE_DIALOG",
+    CLOSE_NODE_ID = "CLOSE_DIALOG",
 }
 
 
