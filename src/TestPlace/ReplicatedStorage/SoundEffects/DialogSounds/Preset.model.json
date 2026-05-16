@@ -30,9 +30,19 @@
         },
         {
             "className": "Sound",
-            "name": "OmoriText",
+            "name": "OmoriText1",
             "properties": {
                 "SoundId": "rbxassetid://6564956178",
+                "PlaybackSpeed": 0.94,
+                "Volume": 0.7
+            }
+        },
+        {
+            "className": "Sound",
+            "name": "OmoriText2",
+            "properties": {
+                "SoundId": "rbxassetid://6564956178",
+                "PlaybackSpeed": 1.06,
                 "Volume": 0.7
             }
         }

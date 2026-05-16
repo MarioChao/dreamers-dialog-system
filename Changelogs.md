@@ -1,6 +1,19 @@
 # Changelogs
 
-## [v0.0.14] Simplified test scripts | 2026/05/16
+## [v0.0.15] Replicated sound effects | 2026/05/16 (2)
+
+Modified `MainClient` to handle empty `charSounds`.
+
+Moved the `Sounds` folder of `StoredValues` to `ReplicatedStorage` > `SoundEffects`.
+- Also renamed to `DialogSounds`.
+- Automatically loaded on the client.
+- Allows highly customizable `Sounds` to be used in dialog sequences.
+
+Made the `OmoriText` into two `Sounds` of different playback speeds.
+
+Moved the test `SampleDialog` module to `ServerScriptService` > `Scripts`.
+
+## [v0.0.14] Simplified test scripts | 2026/05/16 (1)
 
 Removed the original `DialogStorage`-based test scripts.
 - Removes need for `dev-dependencies` in `wally.toml`.

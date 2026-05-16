@@ -1,6 +1,6 @@
 --!strict
 
--- Sounds
+-- Dialog Sounds
 
 
 ---------- Constants ----------
@@ -22,10 +22,12 @@ local Module = {}
 Module.clickFast = {
     Constants.preset.ClickFast1,
     Constants.preset.ClickFast2,
+    Constants.preset.ClickFast3,
 }
 
 Module.omoriText = {
-    Constants.preset.OmoriText,
+    Constants.preset.OmoriText1,
+    Constants.preset.OmoriText2,
 }
 
 

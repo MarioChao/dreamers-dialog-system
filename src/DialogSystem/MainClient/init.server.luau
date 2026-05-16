@@ -374,6 +374,13 @@ applyTypewriterData = function(typewriter: typeof(TextTypewriter.new()), typewri
     local charSpeed = typewriterData.charSpeed or Constants.defaultCharSpeed
     local regex_pauseDelay = typewriterData.regex_pauseDelay or Constants.defaultRegex_pauseDelay
     local charSounds = typewriterData.charSounds or Constants.defaultCharSounds
+    if not next(charSounds) then
+        warn(
+            `[Dialog System]: Received empty char sounds for typewriter. ` ..
+            `Make sure the passed \`Sounds\` are visible on the client.`
+        )
+        charSounds = Constants.defaultCharSounds
+    end
     typewriter:setCharSpeed(charSpeed)
     typewriter:setRegexPauseDelay(regex_pauseDelay)
     typewriter:setSoundPerChar(charSounds, "[^%s]")

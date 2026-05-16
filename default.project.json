@@ -11,6 +11,18 @@
         "DialogSystem": {
           "$path": "src/DialogSystem"
         }
+      },
+
+      "SoundEffects": {
+        "$path": "src/TestPlace/ReplicatedStorage/SoundEffects",
+        "$ignoreUnknownInstances": true
+      }
+    },
+
+    "ServerScriptService": {
+      "Scripts": {
+        "$path": "src/TestPlace/ServerScriptService/Scripts",
+        "$ignoreUnknownInstances": true
       }
     },
 

@@ -6,6 +6,7 @@
 ---------- Services ----------
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local ServerScriptService = game:GetService("ServerScriptService")
 
 
 ---------- Imports ----------
@@ -19,7 +20,7 @@ local DialogSystem = require(_Modules:WaitForChild("DialogSystem"))
 local Constants = {}
 
 Constants.proximityPrompt = script.Parent:WaitForChild("ProximityPrompt")
-Constants.dialog = require(script.Parent:WaitForChild("SampleDialog"))
+Constants.dialog = require(ServerScriptService.Scripts.SampleDialog)
 
 table.freeze(Constants)
 

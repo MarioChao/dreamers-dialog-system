@@ -2,7 +2,7 @@
 name = "mariochao/dreamers-dialog-system"
 description = "Comprehensive dialog system inspired by late july, midsummer and light novels."
 
-version = "0.0.14"
+version = "0.0.15"
 license = "MIT"
 authors = ["Mario Chao"]
 realm = "shared"
