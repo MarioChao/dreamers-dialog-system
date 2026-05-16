@@ -2,7 +2,7 @@
 name = "mariochao/dreamers-dialog-system"
 description = "Comprehensive dialog system inspired by late july, midsummer and light novels."
 
-version = "0.0.0"
+version = "0.0.14"
 license = "MIT"
 authors = ["Mario Chao"]
 realm = "shared"
@@ -15,7 +15,3 @@ exclude = ["TestPlace"]
 BelovedRemote = "mariochao/beloved-remote@0.0.2"
 TextTypewriter = "mariochao/text-typewriter@0.0.1"
 UIUtil = "mariochao/ui-util@0.0.1"
-
-[dev-dependencies]
-ContainerEvent = "mariochao/container-event@0.0.1"
-ContainerMechanic = "mariochao/container-mechanic@0.0.0"

@@ -2,8 +2,16 @@
 
 Comprehensive dialog system inspired by late july, midsummer and light novels.
 
-The test place scripts provide a simple way for managing dialog sequences in your game.
+## Usage
 
-> [!IMPORTANT]
-> The `ContainerEvent` and `ContainerMechanic` modules are imported through the `dev-dependencies` feature of [wally](https://wally.run/).
-> In actual projects, you might want to modify the import statements in `DialogMain` > `DialogSourceSetUp`.
+For easy management of dialog sequences, consider using [Dreamer's Dialog System Framework](https://github.com/MarioChao/dreamers-dialog-system-framework).
+
+## Credits
+
+Inspirations:
+- [late july, midsummer](https://www.roblox.com/games/14107732720/late-july-midsummer)'s April Fools event.
+- Many other light novels.
+
+Sounds:
+- Roblox's [clickfast.wav](https://create.roblox.com/store/asset/12221976/clickfastwav).
+- [OMORI Text](https://create.roblox.com/store/asset/6564956178/OMORI-Text-Sound-Effect).

@@ -4,9 +4,6 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "DevModules": {
-        "$path": "src/DevPackages"
-      },
       "Modules": {
         "$path": "src/Packages",
         "$ignoreUnknownInstances": true,
@@ -17,13 +14,9 @@
       }
     },
 
-    "ServerScriptService": {
-      "DialogStorage": {
-        "$path": "src/TestPlace/ServerScriptService/DialogStorage",
-        "$ignoreUnknownInstances": true
-      },
-      "Scripts": {
-        "$path": "src/TestPlace/ServerScriptService/Scripts",
+    "Workspace": {
+      "_Instances": {
+        "$path": "src/TestPlace/Workspace/_Instances",
         "$ignoreUnknownInstances": true
       }
     }

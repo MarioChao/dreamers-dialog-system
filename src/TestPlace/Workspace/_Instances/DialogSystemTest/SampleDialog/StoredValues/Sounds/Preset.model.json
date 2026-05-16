@@ -27,6 +27,14 @@
                 "PlaybackSpeed": 1.59,
                 "Volume": 0.7
             }
+        },
+        {
+            "className": "Sound",
+            "name": "OmoriText",
+            "properties": {
+                "SoundId": "rbxassetid://6564956178",
+                "Volume": 0.7
+            }
         }
     ]
 }

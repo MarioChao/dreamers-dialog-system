@@ -8,6 +8,7 @@
 local Custom = require(script:WaitForChild("Custom"))
 local GuiStyles = require(script:WaitForChild("GuiStyles"))
 local Images = require(script:WaitForChild("Images"))
+local Sounds = require(script:WaitForChild("Sounds"))
 local Speakers = require(script:WaitForChild("Speakers"))
 
 
@@ -21,6 +22,7 @@ local Module = {}
 Module.custom = Custom
 Module.guiStyles = GuiStyles
 Module.images = Images
+Module.sounds = Sounds
 Module.speakers = Speakers
 
 

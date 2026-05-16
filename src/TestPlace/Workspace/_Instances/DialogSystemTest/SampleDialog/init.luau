@@ -1,13 +1,12 @@
 --!strict
 
--- Template Dialog
+-- Sample Dialog
 
 
 ---------- Imports ----------
 
-local _Assets = script.Parent:WaitForChild("_Assets")
-local DialogInfo = require(_Assets:WaitForChild("DialogInfo"))
-local StoredValues = require(_Assets:WaitForChild("StoredValues"))
+local DialogInfo = require(script:WaitForChild("DialogInfo"))
+local StoredValues = require(script:WaitForChild("StoredValues"))
 
 
 ---------- Module ----------
@@ -61,6 +60,7 @@ Module.dreamer_dialog = {
             },
             typewriterData = {
                 charSpeed = 32,
+                charSounds = StoredValues.sounds.omoriText,
             },
         },
     },

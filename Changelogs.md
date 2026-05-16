@@ -1,5 +1,22 @@
 # Changelogs
 
+## [v0.0.14] Simplified test scripts | 2026/05/16
+
+Removed the original `DialogStorage`-based test scripts.
+- Removes need for `dev-dependencies` in `wally.toml`.
+- Orignial scripts moved [Dreamer's Dialog System Framework](https://github.com/MarioChao/dreamers-dialog-system-framework).
+
+Added new simpler test scripts with a `ProximityPrompt`.
+
+Added numbers to `Sound` names (`ClickFast1`, `ClickFast2`, `ClickFast3`).
+
+Added `Sounds` to `StoredValues`.
+- Also added OMORI text sound.
+
+Published the module to [wally](https://wally.run/).
+
+Slightly updated [README.md](README.md).
+
 ## [v0.0.13] Container mechanic migration | 2026/05/14
 
 Migrated `CollectionService` operations in `DialogSourceSetUp` to [ContainerMechanic](https://github.com/MarioChao/container-mechanic).
